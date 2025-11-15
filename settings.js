@@ -251,6 +251,22 @@ function initSettings() {
   document.getElementById('privacy-athleticism').checked = privacySettings.athleticism;
   document.getElementById('privacy-water').checked = privacySettings.water;
   document.getElementById('privacy-macros').checked = privacySettings.macros;
+  
+  // Field selector change handler
+  document.getElementById('field-selector').addEventListener('change', (e) => {
+    const fieldName = e.target.value;
+    if (fieldName) {
+      showFieldEditor(fieldName);
+    } else {
+      hideFieldEditor();
+    }
+  });
+  
+  // Field edit form submit handler
+  document.getElementById('field-edit-form').addEventListener('submit', saveFieldEdit);
+  
+  // Cancel button handler
+  document.getElementById('cancel-field-edit').addEventListener('click', hideFieldEditor);
 }
 
 // Show settings interface
@@ -365,12 +381,17 @@ function hideFieldEditor() {
 
 function saveFieldEdit(e) {
   e.preventDefault();
+  console.log('saveFieldEdit called');
   
   const fieldName = document.getElementById('field-selector').value;
+  console.log('Field name:', fieldName);
   if (!fieldName) return;
   
   const baseline = loadBaselineStats() || {};
   const profile = userProfile;
+  
+  console.log('Current baseline:', baseline);
+  console.log('Current profile:', profile);
   
   switch(fieldName) {
     case 'displayName':
@@ -438,6 +459,8 @@ function saveFieldEdit(e) {
       break;
   }
   
+  console.log('Saving baseline:', baseline);
+  console.log('Updating display...');
   updateSavedDataDisplay();
   hideFieldEditor();
   alert('Field updated successfully!');
@@ -462,22 +485,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('view-profile-btn').addEventListener('click', () => {
     window.open('index.html', '_blank');
   });
-  
-  // Field selector change handler
-  document.getElementById('field-selector').addEventListener('change', (e) => {
-    const fieldName = e.target.value;
-    if (fieldName) {
-      showFieldEditor(fieldName);
-    } else {
-      hideFieldEditor();
-    }
-  });
-  
-  // Field edit form submit handler
-  document.getElementById('field-edit-form').addEventListener('submit', saveFieldEdit);
-  
-  // Cancel button handler
-  document.getElementById('cancel-field-edit').addEventListener('click', hideFieldEditor);
   
   // Check if already authenticated
   const authToken = sessionStorage.getItem('btb_auth_token');
