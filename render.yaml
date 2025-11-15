@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: btb-fit
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: PASSWORD_HASH
+        sync: false
+      - key: NODE_ENV
+        value: production
