@@ -169,33 +169,48 @@ function lockSettings() {
 
 // On DOM ready
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('Settings page loaded');
+  
   // Password form handler
-  document.getElementById('password-form').addEventListener('submit', async (e) => {
+  const passwordForm = document.getElementById('password-form');
+  console.log('Password form:', passwordForm);
+  
+  passwordForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    console.log('Form submitted');
+    
     const password = document.getElementById('password-input').value;
     const submitBtn = e.target.querySelector('button[type="submit"]');
     const errorMsg = document.getElementById('error-message');
+    
+    console.log('Password length:', password.length);
     
     submitBtn.disabled = true;
     submitBtn.textContent = 'Verifying...';
     errorMsg.style.display = 'none';
     
     try {
+      console.log('Calling API...');
       const response = await fetch('/.netlify/functions/verify-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: password })
       });
       
+      console.log('Response status:', response.status);
       const data = await response.json();
+      console.log('Response data:', data);
       
       if (data.valid) {
+        console.log('Password valid, unlocking...');
         unlockSettings();
       } else {
+        console.log('Password invalid');
         errorMsg.style.display = 'block';
         document.getElementById('password-input').value = '';
       }
     } catch (error) {
+      console.error('Fetch error:', error);
       errorMsg.textContent = 'Authentication error. Please try again.';
       errorMsg.style.display = 'block';
       console.error('Auth error:', error);
