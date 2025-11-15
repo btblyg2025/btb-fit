@@ -13,13 +13,15 @@ let privacySettings = {
   progress: true,
   athleticism: true,
   water: true,
-  macros: true
+  macros: true,
+  bodyComp: true
 };
 let chartInstance = null;
 let athleticChartInstance = null;
 let bmiChartInstance = null;
 let waterChartInstance = null;
 let macrosChartInstance = null;
+let bodyCompChartInstance = null;
 let isAuthenticated = false;
 
 // Utility to format date as YYYY-MM-DD
@@ -315,6 +317,7 @@ function computeBMI(weight, heightCm) {
 
 // Compute athleticism score (now includes workout factor)
 function computeAthleticism(weightKg, heightCm, musclePercent, workoutBonus = 0) {
+  if (!musclePercent || isNaN(musclePercent)) return null; // Can't compute without muscle data
   const bmi = computeBMI(weightKg, heightCm);
   const baseScore = musclePercent - (bmi - 22);
   return baseScore + workoutBonus;
@@ -377,9 +380,10 @@ function updateSilhouette() {
   let factor = 1 + (bmi - base) / 40;
   if (factor < 0.75) factor = 0.75;
   if (factor > 1.5) factor = 1.5;
-  const brightness = 0.5 + (last.muscle / 100);
+  // Use muscle % if available, otherwise use default brightness
+  const muscleBrightness = (last.muscle && !isNaN(last.muscle)) ? (0.5 + (last.muscle / 100)) : 1;
   silhouetteEl.style.transform = `scaleX(${factor.toFixed(2)})`;
-  silhouetteEl.style.filter = `brightness(${brightness.toFixed(2)})`;
+  silhouetteEl.style.filter = `brightness(${muscleBrightness.toFixed(2)})`;
   bmiValueEl.textContent = bmi.toFixed(1);
   statusEl.textContent = category;
   
@@ -589,6 +593,7 @@ function updateAthleticChart() {
       borderColor: '#e48bff',
       backgroundColor: 'rgba(228, 139, 255, 0.2)',
       tension: 0.2,
+      spanGaps: true,
     }],
   };
   
@@ -750,6 +755,106 @@ function updateMacrosChart() {
   }
 }
 
+// Update body composition chart
+function updateBodyCompChart() {
+  const canvas = document.getElementById('body-comp-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const sorted = entries.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+  // Filter entries that have at least one body comp metric
+  const entriesWithData = sorted.filter(e => 
+    !isNaN(e.muscle) || !isNaN(e.bodyFat) || !isNaN(e.bodyWater) || !isNaN(e.boneMass)
+  );
+  
+  if (entriesWithData.length === 0) {
+    // Clear chart if no data
+    if (bodyCompChartInstance) {
+      bodyCompChartInstance.destroy();
+      bodyCompChartInstance = null;
+    }
+    return;
+  }
+  
+  const labels = entriesWithData.map(e => e.date);
+  const muscleData = entriesWithData.map(e => e.muscle || null);
+  const bodyFatData = entriesWithData.map(e => e.bodyFat || null);
+  const bodyWaterData = entriesWithData.map(e => e.bodyWater || null);
+  
+  const datasets = [];
+  
+  // Only add datasets if they have at least some data
+  if (muscleData.some(v => v !== null)) {
+    datasets.push({
+      label: 'Muscle %',
+      data: muscleData,
+      borderColor: '#34e27c',
+      backgroundColor: 'rgba(52, 226, 124, 0.2)',
+      tension: 0.2,
+      spanGaps: true,
+    });
+  }
+  
+  if (bodyFatData.some(v => v !== null)) {
+    datasets.push({
+      label: 'Body Fat %',
+      data: bodyFatData,
+      borderColor: '#ff6b6b',
+      backgroundColor: 'rgba(255, 107, 107, 0.2)',
+      tension: 0.2,
+      spanGaps: true,
+    });
+  }
+  
+  if (bodyWaterData.some(v => v !== null)) {
+    datasets.push({
+      label: 'Body Water %',
+      data: bodyWaterData,
+      borderColor: '#1ac0ff',
+      backgroundColor: 'rgba(26, 192, 255, 0.2)',
+      tension: 0.2,
+      spanGaps: true,
+    });
+  }
+  
+  const data = {
+    labels: labels,
+    datasets: datasets,
+  };
+  
+  const config = {
+    type: 'line',
+    data: data,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          title: { display: true, text: 'Percentage (%)', color: '#9aa8c7' },
+          ticks: { color: '#9aa8c7' },
+          grid: { color: 'rgba(255, 255, 255, 0.1)' },
+          beginAtZero: false,
+          min: 0,
+          max: 100,
+        },
+        x: {
+          ticks: { color: '#9aa8c7' },
+          grid: { color: 'rgba(255, 255, 255, 0.05)' },
+        },
+      },
+      plugins: { legend: { labels: { color: '#e5e9f0' } } },
+    },
+  };
+  
+  if (bodyCompChartInstance) {
+    bodyCompChartInstance.data.labels = labels;
+    bodyCompChartInstance.data.datasets = datasets;
+    bodyCompChartInstance.update();
+  } else {
+    bodyCompChartInstance = new Chart(ctx, config);
+  }
+}
+
 // Initialize admin app
 function initAdmin() {
   entries = loadEntries();
@@ -769,6 +874,11 @@ function initAdmin() {
   document.getElementById('privacy-athleticism').checked = privacySettings.athleticism;
   document.getElementById('privacy-water').checked = privacySettings.water;
   document.getElementById('privacy-macros').checked = privacySettings.macros;
+  
+  const bodyCompToggle = document.getElementById('privacy-body-comp');
+  if (bodyCompToggle) {
+    bodyCompToggle.checked = privacySettings.bodyComp !== false;
+  }
   
   // Privacy toggle handlers
   document.getElementById('privacy-silhouette').addEventListener('change', function() {
@@ -801,6 +911,13 @@ function initAdmin() {
     savePrivacySettings();
   });
   
+  if (bodyCompToggle) {
+    bodyCompToggle.addEventListener('change', function() {
+      privacySettings.bodyComp = this.checked;
+      savePrivacySettings();
+    });
+  }
+  
   document.getElementById('privacy-projections').addEventListener('change', function() {
     privacySettings.projections = this.checked;
     savePrivacySettings();
@@ -821,6 +938,7 @@ function initAdmin() {
   updateBMIChart();
   updateWaterChart();
   updateMacrosChart();
+  updateBodyCompChart();
   calculateProjections();
 }
 
@@ -907,7 +1025,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Entry form handler (stats: date, weight, height, muscle)
+  // Entry form handler (stats: date, weight, height, muscle, body composition)
   document.getElementById('entry-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const date = document.getElementById('date-input').value;
@@ -915,8 +1033,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const heightFeet = parseFloat(document.getElementById('height-feet').value);
     const heightInches = parseFloat(document.getElementById('height-inches').value) || 0;
     const muscle = parseFloat(document.getElementById('muscle-input').value);
+    const bodyFat = parseFloat(document.getElementById('body-fat-input').value);
+    const bodyWater = parseFloat(document.getElementById('body-water-input').value);
+    let boneMass = parseFloat(document.getElementById('bone-mass-input').value);
+    const bmr = parseFloat(document.getElementById('bmr-input').value);
     
-    if (!date || isNaN(weight) || isNaN(muscle)) return;
+    if (!date || isNaN(weight)) return;
     
     let height;
     // If height not provided, use baseline height
@@ -946,12 +1068,35 @@ document.addEventListener('DOMContentLoaded', () => {
       alert(`Weight must be between ${minWeight} and ${maxWeight} ${unitVal}`);
       return;
     }
-    if (muscle < 5 || muscle > 70) {
+    
+    // Validate optional fields if provided
+    if (!isNaN(muscle) && (muscle < 5 || muscle > 70)) {
       alert('Muscle percentage must be between 5% and 70%');
       return;
     }
+    if (!isNaN(bodyFat) && (bodyFat < 3 || bodyFat > 60)) {
+      alert('Body fat percentage must be between 3% and 60%');
+      return;
+    }
+    if (!isNaN(bodyWater) && (bodyWater < 35 || bodyWater > 75)) {
+      alert('Body water percentage must be between 35% and 75%');
+      return;
+    }
+    if (!isNaN(boneMass) && (boneMass < 2 || boneMass > 20)) {
+      alert('Bone mass must be between 2 and 20 lb');
+      return;
+    }
+    if (!isNaN(bmr) && (bmr < 800 || bmr > 4000)) {
+      alert('BMR must be between 800 and 4000 cal/day');
+      return;
+    }
     
-    if (unitVal === 'lb') weight = weight * 0.45359237;
+    if (unitVal === 'lb') {
+      weight = weight * 0.45359237;
+      // Convert bone mass from lb to kg if provided
+      if (!isNaN(boneMass)) boneMass = boneMass * 0.45359237;
+    }
+
     
     const existingEntry = entries.find(e => e.date === date);
     if (existingEntry) {
@@ -963,7 +1108,29 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     
-    const newEntry = existingEntry ? {...existingEntry, weight, height, muscle} : { date, weight, height, muscle, water: 0, protein: 0, carbs: 0, fats: 0 };
+    const newEntry = existingEntry ? {
+      ...existingEntry, 
+      weight, 
+      height, 
+      muscle: isNaN(muscle) ? existingEntry.muscle : muscle,
+      bodyFat: isNaN(bodyFat) ? existingEntry.bodyFat : bodyFat,
+      bodyWater: isNaN(bodyWater) ? existingEntry.bodyWater : bodyWater,
+      boneMass: isNaN(boneMass) ? existingEntry.boneMass : boneMass,
+      bmr: isNaN(bmr) ? existingEntry.bmr : bmr
+    } : { 
+      date, 
+      weight, 
+      height, 
+      muscle: isNaN(muscle) ? undefined : muscle,
+      bodyFat: isNaN(bodyFat) ? undefined : bodyFat,
+      bodyWater: isNaN(bodyWater) ? undefined : bodyWater,
+      boneMass: isNaN(boneMass) ? undefined : boneMass,
+      bmr: isNaN(bmr) ? undefined : bmr,
+      water: 0, 
+      protein: 0, 
+      carbs: 0, 
+      fats: 0 
+    };
     entries = entries.filter(e => e.date !== date);
     entries.push(newEntry);
     saveEntries();
@@ -973,10 +1140,15 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBMIChart();
     updateWaterChart();
     updateMacrosChart();
+    updateBodyCompChart();
     calculateProjections();
     
     document.getElementById('weight-input').value = '';
     document.getElementById('muscle-input').value = '';
+    document.getElementById('body-fat-input').value = '';
+    document.getElementById('body-water-input').value = '';
+    document.getElementById('bone-mass-input').value = '';
+    document.getElementById('bmr-input').value = '';
     alert('Stats entry added successfully!');
   });
 
@@ -1187,6 +1359,7 @@ document.addEventListener('DOMContentLoaded', () => {
           updateBMIChart();
           updateWaterChart();
           updateMacrosChart();
+          updateBodyCompChart();
           alert('Data imported successfully!');
         }
       } catch (error) {

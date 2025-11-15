@@ -73,8 +73,26 @@
                 </div>
               </div>
               <div class="field">
-                <label for="muscle-input">Muscle (%)</label>
-                <input type="number" id="muscle-input" min="5" max="70" step="0.1" placeholder="e.g. 35" required>
+                <label for="muscle-input">Muscle (%) - optional</label>
+                <input type="number" id="muscle-input" min="5" max="70" step="0.1" placeholder="e.g. 35">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="body-fat-input">Body Fat (%) - optional</label>
+                <input type="number" id="body-fat-input" min="3" max="60" step="0.1" placeholder="e.g. 18">
+              </div>
+              <div class="field">
+                <label for="body-water-input">Body Water (%) - optional</label>
+                <input type="number" id="body-water-input" min="35" max="75" step="0.1" placeholder="e.g. 55">
+              </div>
+              <div class="field">
+                <label for="bone-mass-input">Bone Mass (lb) - optional</label>
+                <input type="number" id="bone-mass-input" min="2" max="20" step="0.1" placeholder="e.g. 6.5">
+              </div>
+              <div class="field">
+                <label for="bmr-input">BMR (cal/day) - optional</label>
+                <input type="number" id="bmr-input" min="800" max="4000" step="1" placeholder="e.g. 1650">
               </div>
             </div>
             <div class="form-footer">
@@ -237,6 +255,17 @@
             </div>
           </div>
           <canvas id="water-chart" width="400" height="300"></canvas>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Body Composition</h2>
+            <label class="privacy-toggle">
+              <input type="checkbox" id="privacy-body-comp" checked>
+              <span class="toggle-label">Public</span>
+            </label>
+          </div>
+          <canvas id="body-comp-chart" width="400" height="300"></canvas>
         </div>
       </div>
 

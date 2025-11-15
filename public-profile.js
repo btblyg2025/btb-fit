@@ -7,6 +7,7 @@ let athleticChartInstance = null;
 let bmiChartInstance = null;
 let waterChartInstance = null;
 let macrosChartInstance = null;
+let bodyCompChartInstance = null;
 let userProfile = {
   displayName: ''
 };
@@ -17,7 +18,8 @@ let privacySettings = {
     athleticism: true,
     water: true,
     macros: true,
-    projections: true
+    projections: true,
+    bodyComp: true
   };// Load privacy settings
 const privacyRaw = localStorage.getItem(`btb_privacy_${PUBLIC_USER}`);
 if (privacyRaw) {
@@ -60,6 +62,7 @@ function bmiCategory(bmi) {
 }
 
 function computeAthleticism(weightKg, heightCm, musclePercent) {
+  if (!musclePercent || isNaN(musclePercent)) return null;
   const bmi = computeBMI(weightKg, heightCm);
   return musclePercent - (bmi - 22);
 }
@@ -83,6 +86,7 @@ function applyPrivacySettings() {
   const athleticCard = document.getElementById('athletic-card');
   const waterCard = document.getElementById('water-card');
   const macrosCard = document.getElementById('macros-card');
+  const bodyCompCard = document.getElementById('body-comp-card');
   const projectionsModule = document.getElementById('projections-module');
   
   if (silhouetteCard) silhouetteCard.style.display = privacySettings.silhouette ? 'block' : 'none';
@@ -91,6 +95,7 @@ function applyPrivacySettings() {
   if (athleticCard) athleticCard.style.display = privacySettings.athleticism ? 'block' : 'none';
   if (waterCard) waterCard.style.display = privacySettings.water ? 'block' : 'none';
   if (macrosCard) macrosCard.style.display = privacySettings.macros ? 'block' : 'none';
+  if (bodyCompCard) bodyCompCard.style.display = (privacySettings.bodyComp !== false) ? 'block' : 'none';
   if (projectionsModule) projectionsModule.style.display = privacySettings.projections ? 'block' : 'none';
 }
 
@@ -114,9 +119,10 @@ function updateSilhouette() {
   let factor = 1 + (bmi - base) / 40;
   if (factor < 0.75) factor = 0.75;
   if (factor > 1.5) factor = 1.5;
-  const brightness = 0.5 + (last.muscle / 100);
+  // Use muscle % if available, otherwise use default brightness
+  const muscleBrightness = (last.muscle && !isNaN(last.muscle)) ? (0.5 + (last.muscle / 100)) : 1;
   imgEl.style.transform = `scaleX(${factor.toFixed(2)})`;
-  imgEl.style.filter = `brightness(${brightness.toFixed(2)})`;
+  imgEl.style.filter = `brightness(${muscleBrightness.toFixed(2)})`;
   bmiEl.textContent = bmi.toFixed(1);
   statusEl.textContent = category;
   
@@ -320,6 +326,7 @@ function updateAthleticChart() {
       borderColor: '#e48bff',
       backgroundColor: 'rgba(228, 139, 255, 0.2)',
       tension: 0.2,
+      spanGaps: true,
     }],
   };
   
@@ -476,6 +483,106 @@ function updateMacrosChart() {
   }
 }
 
+// Update body composition chart
+function updateBodyCompChart() {
+  const canvas = document.getElementById('profile-body-comp-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const sorted = entries.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+  // Filter entries that have at least one body comp metric
+  const entriesWithData = sorted.filter(e => 
+    !isNaN(e.muscle) || !isNaN(e.bodyFat) || !isNaN(e.bodyWater) || !isNaN(e.boneMass)
+  );
+  
+  if (entriesWithData.length === 0) {
+    // Clear chart if no data
+    if (bodyCompChartInstance) {
+      bodyCompChartInstance.destroy();
+      bodyCompChartInstance = null;
+    }
+    return;
+  }
+  
+  const labels = entriesWithData.map(e => e.date);
+  const muscleData = entriesWithData.map(e => e.muscle || null);
+  const bodyFatData = entriesWithData.map(e => e.bodyFat || null);
+  const bodyWaterData = entriesWithData.map(e => e.bodyWater || null);
+  
+  const datasets = [];
+  
+  // Only add datasets if they have at least some data
+  if (muscleData.some(v => v !== null)) {
+    datasets.push({
+      label: 'Muscle %',
+      data: muscleData,
+      borderColor: '#34e27c',
+      backgroundColor: 'rgba(52, 226, 124, 0.2)',
+      tension: 0.2,
+      spanGaps: true,
+    });
+  }
+  
+  if (bodyFatData.some(v => v !== null)) {
+    datasets.push({
+      label: 'Body Fat %',
+      data: bodyFatData,
+      borderColor: '#ff6b6b',
+      backgroundColor: 'rgba(255, 107, 107, 0.2)',
+      tension: 0.2,
+      spanGaps: true,
+    });
+  }
+  
+  if (bodyWaterData.some(v => v !== null)) {
+    datasets.push({
+      label: 'Body Water %',
+      data: bodyWaterData,
+      borderColor: '#1ac0ff',
+      backgroundColor: 'rgba(26, 192, 255, 0.2)',
+      tension: 0.2,
+      spanGaps: true,
+    });
+  }
+  
+  const data = {
+    labels: labels,
+    datasets: datasets,
+  };
+  
+  const config = {
+    type: 'line',
+    data: data,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          title: { display: true, text: 'Percentage (%)', color: '#9aa8c7' },
+          ticks: { color: '#9aa8c7' },
+          grid: { color: 'rgba(255, 255, 255, 0.1)' },
+          beginAtZero: false,
+          min: 0,
+          max: 100,
+        },
+        x: {
+          ticks: { color: '#9aa8c7' },
+          grid: { color: 'rgba(255, 255, 255, 0.05)' },
+        },
+      },
+      plugins: { legend: { labels: { color: '#e5e9f0' } } },
+    },
+  };
+  
+  if (bodyCompChartInstance) {
+    bodyCompChartInstance.data.labels = labels;
+    bodyCompChartInstance.data.datasets = datasets;
+    bodyCompChartInstance.update();
+  } else {
+    bodyCompChartInstance = new Chart(ctx, config);
+  }
+}
+
 // Calculate projections for public profile
 function calculatePublicProjections() {
   if (entries.length < 2) return;
@@ -573,5 +680,6 @@ updateAthleticChart();
 updateBMIChart();
 updateWaterChart();
 updateMacrosChart();
+updateBodyCompChart();
 calculatePublicProjections();
 applyPrivacySettings();
