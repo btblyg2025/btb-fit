@@ -6,8 +6,8 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>btb.fit – Public Profile (v3)</title>
-  <link rel="stylesheet" href="style.css?v=3">
+  <title>btb.fit – Public Profile (v4)</title>
+  <link rel="stylesheet" href="style.css?v=4">
   <!-- Chart.js for graphs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -26,7 +26,8 @@
       </div>
     </header>
     <main>
-      <section class="left-col">
+      <div class="charts-grid">
+        <!-- Row 1 -->
         <div class="card silhouette-card" id="silhouette-card">
           <h2>User silhouette</h2>
           <div class="silhouette-wrapper">
@@ -38,42 +39,39 @@
           </div>
         </div>
 
-        <!-- BMI over time chart for public profile -->
         <div class="card" id="bmi-card">
           <h2>BMI Over Time</h2>
           <canvas id="profile-bmi-chart"></canvas>
         </div>
         
-        <!-- Water Intake -->
-        <div class="card" id="water-card">
-          <h2>Water Intake</h2>
-          <canvas id="profile-water-chart"></canvas>
-        </div>
-      </section>
-      <section class="right-col">
+        <!-- Row 2 -->
         <div class="card" id="progress-card">
           <h2>Progress over time</h2>
           <canvas id="profile-chart"></canvas>
         </div>
-        <!-- Athleticism chart for public profile -->
+        
         <div class="card" id="athletic-card">
           <h2>Athleticism Score</h2>
           <canvas id="profile-athletic-chart"></canvas>
         </div>
         
-        <!-- Daily Macros -->
+        <!-- Row 3 -->
+        <div class="card" id="water-card">
+          <h2>Water Intake</h2>
+          <canvas id="profile-water-chart"></canvas>
+        </div>
+        
         <div class="card" id="macros-card">
           <h2>Daily Macros</h2>
           <canvas id="public-macros-chart"></canvas>
         </div>
         
-        <!-- Body Composition -->
+        <!-- Row 4 -->
         <div class="card" id="body-comp-card">
           <h2>Body Composition</h2>
           <canvas id="public-body-comp-chart"></canvas>
         </div>
         
-        <!-- Weight Projections -->
         <div class="card" id="projections-module">
           <h2>Weight Projections</h2>
           <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 16px;">
@@ -99,10 +97,10 @@
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </main>
   </div>
 
-  <script src="public-profile.js?v=3"></script>
+  <script src="public-profile.js?v=4"></script>
 </body>
 </html>
