@@ -187,7 +187,10 @@ function validateDisplayName(name) {
 // Update the saved data display at the top
 function updateSavedDataDisplay() {
   console.log('updateSavedDataDisplay called');
+  
+  // Reload fresh from localStorage
   const baseline = loadBaselineStats();
+  loadUserProfile(); // Reload userProfile from localStorage
   const profile = userProfile;
   
   console.log('Baseline data:', baseline);
