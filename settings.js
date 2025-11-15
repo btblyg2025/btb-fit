@@ -238,6 +238,7 @@ function lockBaselineFields() {
 
 // Initialize settings
 function initSettings() {
+  console.log('initSettings called');
   loadUserProfile();
   loadPrivacySettings();
   
@@ -252,22 +253,40 @@ function initSettings() {
   document.getElementById('privacy-water').checked = privacySettings.water;
   document.getElementById('privacy-macros').checked = privacySettings.macros;
   
-  // Field selector change handler
-  document.getElementById('field-selector').addEventListener('change', (e) => {
-    console.log('Field selector changed:', e.target.value);
-    const fieldName = e.target.value;
-    if (fieldName) {
-      showFieldEditor(fieldName);
-    } else {
-      hideFieldEditor();
-    }
-  });
+  console.log('Setting up field selector event listener...');
+  const fieldSelector = document.getElementById('field-selector');
+  console.log('Field selector element:', fieldSelector);
+  
+  if (fieldSelector) {
+    fieldSelector.addEventListener('change', (e) => {
+      console.log('Field selector changed:', e.target.value);
+      const fieldName = e.target.value;
+      if (fieldName) {
+        showFieldEditor(fieldName);
+      } else {
+        hideFieldEditor();
+      }
+    });
+    console.log('Field selector event listener attached');
+  } else {
+    console.error('Field selector not found!');
+  }
   
   // Field edit form submit handler
-  document.getElementById('field-edit-form').addEventListener('submit', saveFieldEdit);
+  const fieldEditForm = document.getElementById('field-edit-form');
+  console.log('Field edit form:', fieldEditForm);
+  if (fieldEditForm) {
+    fieldEditForm.addEventListener('submit', saveFieldEdit);
+  }
   
   // Cancel button handler
-  document.getElementById('cancel-field-edit').addEventListener('click', hideFieldEditor);
+  const cancelBtn = document.getElementById('cancel-field-edit');
+  console.log('Cancel button:', cancelBtn);
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', hideFieldEditor);
+  }
+  
+  console.log('initSettings complete');
 }
 
 // Show settings interface
