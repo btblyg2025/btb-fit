@@ -849,6 +849,20 @@ document.addEventListener('DOMContentLoaded', () => {
     alert('Failed to load Chart.js library. Charts will not be displayed.');
   }
 
+  // Attach button event listeners first (always needed)
+  // Lock button
+  document.getElementById('logout-btn').addEventListener('click', lockAdmin);
+
+  // View public profile button
+  document.getElementById('view-profile-btn').addEventListener('click', () => {
+    window.open('index.html', '_blank');
+  });
+  
+  // Settings button
+  document.getElementById('settings-btn').addEventListener('click', () => {
+    window.location.href = 'settings.html';
+  });
+
   // Check if already authenticated
   const authToken = sessionStorage.getItem('btb_auth_token');
   if (authToken) {
@@ -891,19 +905,6 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Login';
     }
-  });
-
-  // Lock button
-  document.getElementById('logout-btn').addEventListener('click', lockAdmin);
-
-  // View public profile button
-  document.getElementById('view-profile-btn').addEventListener('click', () => {
-    window.open('index.html', '_blank');
-  });
-  
-  // Settings button
-  document.getElementById('settings-btn').addEventListener('click', () => {
-    window.location.href = 'settings.html';
   });
 
   // Entry form handler (stats: date, weight, height, muscle)
