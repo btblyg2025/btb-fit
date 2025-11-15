@@ -99,6 +99,33 @@
         </div>
       </div>
     </main>
+
+    <!-- Contact Modal -->
+    <div id="contact-modal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" id="close-modal">&times;</span>
+        <h2>Contact Us</h2>
+        <form id="contact-form">
+          <div class="form-group">
+            <label for="contact-email">Your Email</label>
+            <input type="email" id="contact-email" required placeholder="your.email@example.com">
+            <span class="error-message" id="email-error"></span>
+          </div>
+          <div class="form-group">
+            <label for="contact-message">Message</label>
+            <textarea id="contact-message" required rows="6" placeholder="Type your message here..."></textarea>
+            <span class="error-message" id="message-error"></span>
+          </div>
+          <div class="form-footer">
+            <button type="submit" class="btn btn-primary">Send Message</button>
+          </div>
+        </form>
+        <div id="contact-success" class="success-message" style="display: none;">
+          <strong>✓ Message sent successfully!</strong>
+          <p>We'll get back to you soon.</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Our script -->
@@ -109,10 +136,138 @@
       window.location.href = 'admin.html';
     });
 
-    // Contact button - obfuscated email
-    document.getElementById('contact-btn').addEventListener('click', function() {
+    // Contact modal functionality
+    const contactBtn = document.getElementById('contact-btn');
+    const contactModal = document.getElementById('contact-modal');
+    const closeModal = document.getElementById('close-modal');
+    const contactForm = document.getElementById('contact-form');
+    const emailInput = document.getElementById('contact-email');
+    const messageInput = document.getElementById('contact-message');
+    const emailError = document.getElementById('email-error');
+    const messageError = document.getElementById('message-error');
+    const successDiv = document.getElementById('contact-success');
+
+    // Email validation regex
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    
+    // Common disposable email domains to block
+    const disposableDomains = [
+      'tempmail.com', 'throwaway.email', '10minutemail.com', 'guerrillamail.com',
+      'mailinator.com', 'trashmail.com', 'temp-mail.org', 'fakeinbox.com',
+      'yopmail.com', 'maildrop.cc', 'getnada.com', 'sharklasers.com'
+    ];
+
+    // Validate email
+    function validateEmail(email) {
+      if (!email) {
+        return 'Email is required';
+      }
+      if (!emailRegex.test(email)) {
+        return 'Please enter a valid email address';
+      }
+      const domain = email.split('@')[1]?.toLowerCase();
+      if (disposableDomains.includes(domain)) {
+        return 'Disposable email addresses are not allowed';
+      }
+      return null;
+    }
+
+    // Validate message
+    function validateMessage(message) {
+      if (!message || message.trim().length === 0) {
+        return 'Message is required';
+      }
+      if (message.trim().length < 10) {
+        return 'Message must be at least 10 characters';
+      }
+      if (message.length > 5000) {
+        return 'Message is too long (max 5000 characters)';
+      }
+      // Check for suspicious patterns (scripts, spam)
+      const suspiciousPatterns = [/<script/i, /javascript:/i, /onclick=/i, /onerror=/i];
+      if (suspiciousPatterns.some(pattern => pattern.test(message))) {
+        return 'Message contains invalid content';
+      }
+      return null;
+    }
+
+    // Open modal
+    contactBtn.addEventListener('click', function() {
+      contactModal.style.display = 'flex';
+      emailInput.focus();
+    });
+
+    // Close modal
+    closeModal.addEventListener('click', function() {
+      contactModal.style.display = 'none';
+      contactForm.reset();
+      emailError.textContent = '';
+      messageError.textContent = '';
+      successDiv.style.display = 'none';
+    });
+
+    // Close on outside click
+    window.addEventListener('click', function(e) {
+      if (e.target === contactModal) {
+        contactModal.style.display = 'none';
+        contactForm.reset();
+        emailError.textContent = '';
+        messageError.textContent = '';
+        successDiv.style.display = 'none';
+      }
+    });
+
+    // Real-time email validation
+    emailInput.addEventListener('blur', function() {
+      const error = validateEmail(this.value);
+      emailError.textContent = error || '';
+    });
+
+    // Real-time message validation
+    messageInput.addEventListener('blur', function() {
+      const error = validateMessage(this.value);
+      messageError.textContent = error || '';
+    });
+
+    // Form submission
+    contactForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Validate
+      const emailErr = validateEmail(emailInput.value);
+      const messageErr = validateMessage(messageInput.value);
+      
+      emailError.textContent = emailErr || '';
+      messageError.textContent = messageErr || '';
+      
+      if (emailErr || messageErr) {
+        return;
+      }
+
+      // Construct mailto URL with obfuscated email
       const parts = ['contactus', 'btb', 'fit'];
-      window.location.href = 'mailto:' + parts[0] + '@' + parts[1] + '.' + parts[2];
+      const recipientEmail = parts[0] + '@' + parts[1] + '.' + parts[2];
+      const subject = encodeURIComponent('Contact Form Message from BTB Fit');
+      const body = encodeURIComponent(
+        `From: ${emailInput.value}\n\n${messageInput.value}`
+      );
+      
+      // Open mailto link
+      window.location.href = `mailto:${recipientEmail}?subject=${subject}&body=${body}`;
+      
+      // Show success message
+      contactForm.style.display = 'none';
+      successDiv.style.display = 'block';
+      
+      // Reset form after 3 seconds and close modal
+      setTimeout(function() {
+        contactModal.style.display = 'none';
+        contactForm.style.display = 'block';
+        successDiv.style.display = 'none';
+        contactForm.reset();
+        emailError.textContent = '';
+        messageError.textContent = '';
+      }, 3000);
     });
   </script>
 </body>
