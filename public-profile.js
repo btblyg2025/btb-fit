@@ -14,13 +14,15 @@ let userProfile = {
 let privacySettings = {
   silhouette: true,
   bmi: true,
-    progress: true,
-    athleticism: true,
-    water: true,
-    macros: true,
-    projections: true,
-    bodyComp: true
-  };// Load privacy settings
+  progress: true,
+  athleticism: true,
+  water: true,
+  macros: true,
+  bodyComp: true,
+  projections: true
+};
+
+// Load privacy settings
 const privacyRaw = localStorage.getItem(`btb_privacy_${PUBLIC_USER}`);
 if (privacyRaw) {
   try {

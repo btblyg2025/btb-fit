@@ -14,7 +14,8 @@ let privacySettings = {
   athleticism: true,
   water: true,
   macros: true,
-  bodyComp: true
+  bodyComp: true,
+  projections: true
 };
 let chartInstance = null;
 let athleticChartInstance = null;
