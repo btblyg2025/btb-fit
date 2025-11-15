@@ -229,6 +229,37 @@ function updateSavedDataDisplay() {
     bodyFatEl.style.color = '#9aa8c7';
   }
   
+  // Body Water
+  const bodyWaterEl = document.getElementById('body-water-display');
+  if (bodyWaterEl && baseline && baseline.bodyWater) {
+    bodyWaterEl.textContent = baseline.bodyWater + '%';
+    bodyWaterEl.style.color = '#34e27c';
+  } else if (bodyWaterEl) {
+    bodyWaterEl.textContent = 'Not set';
+    bodyWaterEl.style.color = '#9aa8c7';
+  }
+  
+  // Bone Mass
+  const boneMassEl = document.getElementById('bone-mass-display');
+  if (boneMassEl && baseline && baseline.boneMass) {
+    const boneMassLb = (baseline.boneMass * 2.20462).toFixed(1);
+    boneMassEl.textContent = boneMassLb + ' lb';
+    boneMassEl.style.color = '#34e27c';
+  } else if (boneMassEl) {
+    boneMassEl.textContent = 'Not set';
+    boneMassEl.style.color = '#9aa8c7';
+  }
+  
+  // BMR
+  const bmrEl = document.getElementById('bmr-display');
+  if (bmrEl && baseline && baseline.bmr) {
+    bmrEl.textContent = baseline.bmr + ' cal/day';
+    bmrEl.style.color = '#34e27c';
+  } else if (bmrEl) {
+    bmrEl.textContent = 'Not set';
+    bmrEl.style.color = '#9aa8c7';
+  }
+  
   console.log('Display update complete');
 }
 
