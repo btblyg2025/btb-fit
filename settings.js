@@ -526,11 +526,39 @@ document.addEventListener('DOMContentLoaded', () => {
     baselineEditMode = false;
     lockBaselineFields();
     
-    // Update the display at the top
-    setTimeout(() => {
-      updateSavedDataDisplay();
-      console.log('Display updated');
-    }, 100);
+    // Update the display at the top - directly
+    const ageDisplay = document.getElementById('age-display');
+    if (ageDisplay) {
+      ageDisplay.textContent = baseline.age + ' years';
+      ageDisplay.style.color = '#34e27c';
+    }
+    
+    const heightDisplay = document.getElementById('height-display');
+    if (heightDisplay) {
+      const totalIn = baseline.height / 2.54;
+      const ft = Math.floor(totalIn / 12);
+      const inches = Math.round(totalIn % 12);
+      heightDisplay.textContent = `${ft}'${inches}"`;
+      heightDisplay.style.color = '#34e27c';
+    }
+    
+    const weightDisplay = document.getElementById('weight-display');
+    if (weightDisplay) {
+      weightDisplay.textContent = `${baseline.weightDisplay} ${baseline.weightUnit}`;
+      weightDisplay.style.color = '#34e27c';
+    }
+    
+    const muscleDisplay = document.getElementById('muscle-display');
+    if (muscleDisplay && baseline.muscle) {
+      muscleDisplay.textContent = baseline.muscle + '%';
+      muscleDisplay.style.color = '#34e27c';
+    }
+    
+    const bodyFatDisplay = document.getElementById('body-fat-display');
+    if (bodyFatDisplay && baseline.bodyFat) {
+      bodyFatDisplay.textContent = baseline.bodyFat + '%';
+      bodyFatDisplay.style.color = '#34e27c';
+    }
     
     alert('Baseline stats saved successfully!');
     console.log('Saved baseline:', baseline);
@@ -570,9 +598,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Repopulate field with saved value
     document.getElementById('display-name-input').value = displayName;
     
+    // Update display directly
+    const displayNameEl = document.getElementById('display-name-display');
+    if (displayNameEl) {
+      displayNameEl.textContent = displayName;
+      displayNameEl.style.color = '#34e27c';
+    }
+    
     profileEditMode = false;
     lockProfileFields();
-    updateSavedDataDisplay();
     
     alert('Profile saved successfully!');
     console.log('Saved profile:', userProfile);
