@@ -80,6 +80,8 @@ if (raw) {
 
 // Apply privacy settings to DOM
 function applyPrivacySettings() {
+  console.log('Applying privacy settings:', privacySettings);
+  
   const silhouetteCard = document.querySelector('.silhouette-card');
   const bmiCard = document.getElementById('bmi-card');
   const progressCard = document.getElementById('progress-card');
@@ -89,6 +91,17 @@ function applyPrivacySettings() {
   const bodyCompCard = document.getElementById('body-comp-card');
   const projectionsModule = document.getElementById('projections-module');
   
+  console.log('Found elements:', {
+    silhouetteCard: !!silhouetteCard,
+    bmiCard: !!bmiCard,
+    progressCard: !!progressCard,
+    athleticCard: !!athleticCard,
+    waterCard: !!waterCard,
+    macrosCard: !!macrosCard,
+    bodyCompCard: !!bodyCompCard,
+    projectionsModule: !!projectionsModule
+  });
+  
   if (silhouetteCard) silhouetteCard.style.display = privacySettings.silhouette ? 'block' : 'none';
   if (bmiCard) bmiCard.style.display = privacySettings.bmi ? 'block' : 'none';
   if (progressCard) progressCard.style.display = privacySettings.progress ? 'block' : 'none';
@@ -97,6 +110,8 @@ function applyPrivacySettings() {
   if (macrosCard) macrosCard.style.display = privacySettings.macros ? 'block' : 'none';
   if (bodyCompCard) bodyCompCard.style.display = (privacySettings.bodyComp !== false) ? 'block' : 'none';
   if (projectionsModule) projectionsModule.style.display = privacySettings.projections ? 'block' : 'none';
+  
+  console.log('Privacy settings applied');
 }
 
 // Update silhouette
