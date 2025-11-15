@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+const { saveData } = require('../db');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -18,12 +18,11 @@ module.exports = async function handler(req, res) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // Store in Vercel KV if available, otherwise just return success
-    // You'll need to set up Vercel KV storage separately
-    const key = `btbga_${dataType}`;
+    // Save to PostgreSQL database
+    const username = 'btbga'; // Could extract from token in production
+    await saveData(username, dataType, data);
     
-    // For now, we'll just acknowledge the save
-    // Vercel KV would be: await kv.set(key, JSON.stringify(data));
+    console.log(`Saved ${dataType} to database for ${username}`);
     
     return res.status(200).json({ 
       success: true,

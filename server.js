@@ -1,11 +1,15 @@
 const express = require('express');
 const path = require('path');
+const { initDB } = require('./db');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
 app.use(express.static(__dirname));
+
+// Initialize database
+initDB().catch(err => console.error('Failed to initialize database:', err));
 
 // Import API routes
 const verifyPassword = require('./api/verify-password');
