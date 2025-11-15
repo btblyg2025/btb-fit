@@ -12,7 +12,9 @@ let privacySettings = {
   progress: true,
   athleticism: true,
   water: true,
-  macros: true
+  macros: true,
+  bodyComp: true,
+  projections: true
 };
 let entries = [];
 let isAuthenticated = false;
@@ -279,6 +281,8 @@ function initSettings() {
   document.getElementById('privacy-athleticism').checked = privacySettings.athleticism;
   document.getElementById('privacy-water').checked = privacySettings.water;
   document.getElementById('privacy-macros').checked = privacySettings.macros;
+  document.getElementById('privacy-bodyComp').checked = privacySettings.bodyComp;
+  document.getElementById('privacy-projections').checked = privacySettings.projections;
   
   console.log('Setting up field selector event listener...');
   const fieldSelector = document.getElementById('field-selector');
@@ -341,6 +345,11 @@ function initSettings() {
   });
   document.getElementById('privacy-macros').addEventListener('change', (e) => {
     privacySettings.macros = e.target.checked;
+    savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
+  });
+  document.getElementById('privacy-bodyComp').addEventListener('change', (e) => {
+    privacySettings.bodyComp = e.target.checked;
     savePrivacySettings();
     syncToCloud('privacy', privacySettings);
   });
