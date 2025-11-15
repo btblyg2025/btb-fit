@@ -254,6 +254,7 @@ function initSettings() {
   
   // Field selector change handler
   document.getElementById('field-selector').addEventListener('change', (e) => {
+    console.log('Field selector changed:', e.target.value);
     const fieldName = e.target.value;
     if (fieldName) {
       showFieldEditor(fieldName);
@@ -289,10 +290,17 @@ function lockSettings() {
 
 // Field editor handlers
 function showFieldEditor(fieldName) {
+  console.log('showFieldEditor called with:', fieldName);
   const container = document.getElementById('field-editor-container');
   const content = document.getElementById('field-edit-content');
+  console.log('Container:', container);
+  console.log('Content:', content);
+  
   const baseline = loadBaselineStats();
   const profile = userProfile;
+  
+  console.log('Baseline:', baseline);
+  console.log('Profile:', profile);
   
   let html = '';
   
@@ -370,8 +378,10 @@ function showFieldEditor(fieldName) {
       break;
   }
   
+  console.log('Generated HTML:', html);
   content.innerHTML = html;
   container.style.display = 'block';
+  console.log('Field editor shown');
 }
 
 function hideFieldEditor() {
