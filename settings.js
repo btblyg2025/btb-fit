@@ -519,6 +519,11 @@ function saveFieldEdit(e) {
   console.log('Updating display...');
   updateSavedDataDisplay();
   hideFieldEditor();
+  
+  // Debug: Log what's in localStorage after save
+  const stored = localStorage.getItem(`btb_baseline_${currentUser}`);
+  console.log('Data in localStorage after save:', stored);
+  
   alert('Field updated successfully!');
 }
 
