@@ -92,8 +92,29 @@ function saveBaselineStats(baseline) {
   if (!currentUser) return;
   try {
     localStorage.setItem(`btb_baseline_${currentUser}`, JSON.stringify(baseline));
+    syncToCloud('baseline', baseline);
   } catch (e) {
     console.error('Failed to save baseline stats:', e);
+  }
+}
+
+// Sync data to Netlify Blobs
+async function syncToCloud(dataType, data) {
+  const token = sessionStorage.getItem('btb_auth_token');
+  if (!token) return;
+  
+  try {
+    const response = await fetch('/.netlify/functions/save-data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, dataType, data })
+    });
+    
+    if (response.ok) {
+      console.log(`✓ ${dataType} synced to cloud`);
+    }
+  } catch (error) {
+    console.warn('Cloud sync failed:', error);
   }
 }
 

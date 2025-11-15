@@ -84,6 +84,8 @@ function saveEntries() {
   if (!currentUser) return;
   try {
     localStorage.setItem(`btb_entries_${currentUser}`, JSON.stringify(entries));
+    // Sync to cloud in background (non-blocking)
+    syncToCloud('entries', entries);
   } catch (e) {
     console.error('Failed to save entries to localStorage:', e);
     if (e.name === 'QuotaExceededError') {
@@ -92,6 +94,82 @@ function saveEntries() {
       alert('Error saving your data. Your browser may have storage restrictions enabled.');
     }
   }
+}
+
+// Sync data to Netlify Blobs
+async function syncToCloud(dataType, data) {
+  const token = sessionStorage.getItem('btb_auth_token');
+  if (!token) return; // Not authenticated, skip cloud sync
+  
+  try {
+    const response = await fetch('/.netlify/functions/save-data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, dataType, data })
+    });
+    
+    if (response.ok) {
+      console.log(`✓ ${dataType} synced to cloud`);
+      // Update last sync indicator
+      localStorage.setItem(`btb_last_sync_${dataType}`, new Date().toISOString());
+    }
+  } catch (error) {
+    console.warn('Cloud sync failed (offline?):', error);
+    // Silent fail - localStorage is still working
+  }
+}
+
+// Load data from cloud and merge with local
+async function loadFromCloud(dataType) {
+  const token = sessionStorage.getItem('btb_auth_token');
+  if (!token) return null;
+  
+  try {
+    const response = await fetch('/.netlify/functions/load-data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, dataType })
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      if (result.success && result.data) {
+        console.log(`✓ ${dataType} loaded from cloud`);
+        return result.data;
+      }
+    }
+  } catch (error) {
+    console.warn('Cloud load failed:', error);
+  }
+  return null;
+}
+
+// Merge local and cloud data (cloud takes precedence if newer)
+function mergeData(localData, cloudData, dataType) {
+  if (!cloudData) return localData;
+  if (!localData || localData.length === 0) return cloudData;
+  
+  if (dataType === 'entries') {
+    // Merge entries by date, cloud wins on conflicts
+    const merged = [...localData];
+    const localDates = new Set(localData.map(e => e.date));
+    
+    cloudData.forEach(cloudEntry => {
+      const existingIndex = merged.findIndex(e => e.date === cloudEntry.date);
+      if (existingIndex >= 0) {
+        // Replace with cloud version (assumed newer)
+        merged[existingIndex] = cloudEntry;
+      } else {
+        // Add new entry from cloud
+        merged.push(cloudEntry);
+      }
+    });
+    
+    return merged;
+  }
+  
+  // For other data types (baseline, profile), cloud takes precedence
+  return cloudData;
 }
 
 // Calculate weight projections based on trends
@@ -228,6 +306,7 @@ function savePrivacySettings() {
   if (!currentUser) return;
   try {
     localStorage.setItem(`btb_privacy_${currentUser}`, JSON.stringify(privacySettings));
+    syncToCloud('privacy', privacySettings);
   } catch (e) {
     console.error('Failed to save privacy settings:', e);
   }
@@ -251,6 +330,7 @@ function saveUserProfile() {
   if (!currentUser) return;
   try {
     localStorage.setItem(`btb_profile_${currentUser}`, JSON.stringify(userProfile));
+    syncToCloud('profile', userProfile);
   } catch (e) {
     console.error('Failed to save user profile:', e);
   }
@@ -856,10 +936,23 @@ function updateBodyCompChart() {
 }
 
 // Initialize admin app
-function initAdmin() {
+async function initAdmin() {
+  // Load local data first
   entries = loadEntries();
   loadPrivacySettings();
   loadUserProfile();
+  
+  // Try to sync from cloud
+  const cloudEntries = await loadFromCloud('entries');
+  if (cloudEntries) {
+    entries = mergeData(entries, cloudEntries, 'entries');
+    // Save merged data locally
+    try {
+      localStorage.setItem(`btb_entries_${currentUser}`, JSON.stringify(entries));
+    } catch (e) {
+      console.error('Failed to save merged entries:', e);
+    }
+  }
   
   const unitSelectEl = document.getElementById('unit-select');
   const savedUnit = localStorage.getItem(`btb_unit_${currentUser}`);
