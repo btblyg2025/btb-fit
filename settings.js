@@ -123,6 +123,36 @@ async function syncToCloud(dataType, data) {
 // Validate display name
 function validateDisplayName(name) {
   if (!name || name.trim().length === 0) {
+    return { valid: true, error: '' };
+  }
+  
+  const trimmed = name.trim();
+  
+  if (trimmed.length < 2) {
+    return { valid: false, error: 'Name must be at least 2 characters long' };
+  }
+  
+  if (trimmed.length > 50) {
+    return { valid: false, error: 'Name must be 50 characters or less' };
+  }
+  
+  if (!/^[a-zA-Z\s'-]+$/.test(trimmed)) {
+    return { valid: false, error: 'Name can only contain letters, spaces, hyphens, and apostrophes' };
+  }
+  
+  const inappropriate = [
+    'fuck', 'shit', 'damn', 'bitch', 'asshole', 'bastard', 'crap', 'piss',
+    'dick', 'cock', 'pussy', 'cunt', 'fag', 'nigger', 'nigga', 'slut', 'whore',
+    'retard', 'rape', 'nazi', 'hitler', 'kill', 'die', 'death', 'terrorist'
+  ];
+  
+  const lowerName = trimmed.toLowerCase();
+  for (const word of inappropriate) {
+    if (lowerName.includes(word)) {
+      return { valid: false, error: 'Please use an appropriate name' };
+    }
+  }
+  
   return { valid: true, error: '' };
 }
 
@@ -200,40 +230,6 @@ function updateSavedDataDisplay() {
   }
   
   console.log('Display update complete');
-}
-
-// Lock baseline fields
-function lockBaselineFields() {
-  }
-  
-  const trimmed = name.trim();
-  
-  if (trimmed.length < 2) {
-    return { valid: false, error: 'Name must be at least 2 characters long' };
-  }
-  
-  if (trimmed.length > 50) {
-    return { valid: false, error: 'Name must be 50 characters or less' };
-  }
-  
-  if (!/^[a-zA-Z\s'-]+$/.test(trimmed)) {
-    return { valid: false, error: 'Name can only contain letters, spaces, hyphens, and apostrophes' };
-  }
-  
-  const inappropriate = [
-    'fuck', 'shit', 'damn', 'bitch', 'asshole', 'bastard', 'crap', 'piss',
-    'dick', 'cock', 'pussy', 'cunt', 'fag', 'nigger', 'nigga', 'slut', 'whore',
-    'retard', 'rape', 'nazi', 'hitler', 'kill', 'die', 'death', 'terrorist'
-  ];
-  
-  const lowerName = trimmed.toLowerCase();
-  for (const word of inappropriate) {
-    if (lowerName.includes(word)) {
-      return { valid: false, error: 'Please use an appropriate name' };
-    }
-  }
-  
-  return { valid: true, error: '' };
 }
 
 // Initialize settings
