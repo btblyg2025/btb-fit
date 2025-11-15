@@ -24,7 +24,7 @@
     </header>
     <main>
       <section class="left-col">
-        <div class="card silhouette-card">
+        <div class="card silhouette-card" id="silhouette-card">
           <h2>User silhouette</h2>
           <div class="silhouette-wrapper">
             <img id="profile-silhouette" class="silhouette-img" src="assets/male_silhouette_black.png" alt="Silhouette">
@@ -36,20 +36,65 @@
         </div>
 
         <!-- BMI over time chart for public profile -->
-        <div class="card">
+        <div class="card" id="bmi-card">
           <h2>BMI Over Time</h2>
           <canvas id="profile-bmi-chart"></canvas>
         </div>
+        
+        <!-- Water Intake -->
+        <div class="card" id="water-card">
+          <h2>Water Intake</h2>
+          <canvas id="profile-water-chart"></canvas>
+        </div>
       </section>
       <section class="right-col">
-        <div class="card">
+        <div class="card" id="progress-card">
           <h2>Progress over time</h2>
           <canvas id="profile-chart"></canvas>
         </div>
         <!-- Athleticism chart for public profile -->
-        <div class="card">
+        <div class="card" id="athletic-card">
           <h2>Athleticism Score</h2>
           <canvas id="profile-athletic-chart"></canvas>
+        </div>
+        
+        <!-- Daily Macros -->
+        <div class="card" id="macros-card">
+          <h2>Daily Macros</h2>
+          <canvas id="public-macros-chart"></canvas>
+        </div>
+        
+        <!-- Body Composition -->
+        <div class="card" id="body-comp-card">
+          <h2>Body Composition</h2>
+          <canvas id="public-body-comp-chart"></canvas>
+        </div>
+        
+        <!-- Weight Projections -->
+        <div class="card" id="projections-module">
+          <h2>Weight Projections</h2>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 16px;">
+            <div>
+              <p style="font-size: 12px; color: #9aa8c7;">7 Days</p>
+              <p id="public-proj-7" style="font-size: 20px; font-weight: 600; color: #34e27c;">–</p>
+              <p id="public-proj-change-7" style="font-size: 14px;"></p>
+            </div>
+            <div>
+              <p style="font-size: 12px; color: #9aa8c7;">15 Days</p>
+              <p id="public-proj-15" style="font-size: 20px; font-weight: 600; color: #34e27c;">–</p>
+              <p id="public-proj-change-15" style="font-size: 14px;"></p>
+            </div>
+            <div>
+              <p style="font-size: 12px; color: #9aa8c7;">30 Days</p>
+              <p id="public-proj-30" style="font-size: 20px; font-weight: 600; color: #34e27c;">–</p>
+              <p id="public-proj-change-30" style="font-size: 14px;"></p>
+            </div>
+            <div>
+              <p style="font-size: 12px; color: #9aa8c7;">180 Days</p>
+              <p id="public-proj-180" style="font-size: 20px; font-weight: 600; color: #34e27c;">–</p>
+              <p id="public-proj-change-180" style="font-size: 14px;"></p>
+            </div>
+          </div>
         </div>
       </section>
     </main>
