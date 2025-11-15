@@ -266,6 +266,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (baseline.muscle !== undefined) {
       document.getElementById('baseline-muscle-input').value = baseline.muscle;
     }
+    if (baseline.bodyFat !== undefined) {
+      document.getElementById('baseline-body-fat-input').value = baseline.bodyFat;
+    }
+    if (baseline.bodyWater !== undefined) {
+      document.getElementById('baseline-body-water-input').value = baseline.bodyWater;
+    }
+    if (baseline.boneMass !== undefined) {
+      // Convert from kg to lb for display
+      const boneMassLb = baseline.boneMass * 2.20462;
+      document.getElementById('baseline-bone-mass-input').value = boneMassLb.toFixed(1);
+    }
+    if (baseline.bmr !== undefined) {
+      document.getElementById('baseline-bmr-input').value = baseline.bmr;
+    }
   }
 
   // Baseline stats form handler
@@ -278,6 +292,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const heightFt = parseFloat(document.getElementById('baseline-height-ft').value);
     const heightIn = parseFloat(document.getElementById('baseline-height-in').value);
     const muscle = parseFloat(document.getElementById('baseline-muscle-input').value);
+    const bodyFat = parseFloat(document.getElementById('baseline-body-fat-input').value);
+    const bodyWater = parseFloat(document.getElementById('baseline-body-water-input').value);
+    let boneMass = parseFloat(document.getElementById('baseline-bone-mass-input').value);
+    const bmr = parseFloat(document.getElementById('baseline-bmr-input').value);
     
     // Convert weight to kg for storage
     const weightKg = weightUnit === 'lb' ? weightInput / 2.20462 : weightInput;
@@ -286,13 +304,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalInches = (heightFt * 12) + heightIn;
     const heightCm = totalInches * 2.54;
     
+    // Convert bone mass from lb to kg if provided
+    if (!isNaN(boneMass)) {
+      boneMass = boneMass * 0.45359237;
+    }
+    
     const baseline = {
       age: age,
       weight: weightKg,
       weightDisplay: weightInput,
       weightUnit: weightUnit,
       height: heightCm,
-      muscle: muscle
+      muscle: isNaN(muscle) ? undefined : muscle,
+      bodyFat: isNaN(bodyFat) ? undefined : bodyFat,
+      bodyWater: isNaN(bodyWater) ? undefined : bodyWater,
+      boneMass: isNaN(boneMass) ? undefined : boneMass,
+      bmr: isNaN(bmr) ? undefined : bmr
     };
     
     saveBaselineStats(baseline);
