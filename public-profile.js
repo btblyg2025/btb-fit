@@ -689,12 +689,15 @@ function calculatePublicProjections() {
   });
 }
 
-updateSilhouette();
-updateChart();
-updateAthleticChart();
-updateBMIChart();
-updateWaterChart();
-updateMacrosChart();
-updateBodyCompChart();
-calculatePublicProjections();
-applyPrivacySettings();
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  updateSilhouette();
+  updateChart();
+  updateAthleticChart();
+  updateBMIChart();
+  updateWaterChart();
+  updateMacrosChart();
+  updateBodyCompChart();
+  calculatePublicProjections();
+  applyPrivacySettings();
+});
