@@ -43,7 +43,7 @@ const profileUserEl = document.getElementById('profile-user');
 if (profileUserEl) {
   const displayText = userProfile.displayName 
     ? `${userProfile.displayName}'s Fitness Journey` 
-    : `btbga's Fitness Journey`;
+    : `Your Fitness Journey`;
   profileUserEl.textContent = displayText;
 }
 
