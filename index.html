@@ -21,6 +21,12 @@
       </div>
       <div class="user-bar">
         <span id="profile-user">Loading...</span>
+        <button class="contact-btn" id="contact-btn" title="Contact Us">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+        </button>
       </div>
     </header>
     <main>
@@ -101,6 +107,12 @@
     // Secret admin access - click logo to go to admin page
     document.getElementById('secret-admin-link').addEventListener('click', function() {
       window.location.href = 'admin.html';
+    });
+
+    // Contact button - obfuscated email
+    document.getElementById('contact-btn').addEventListener('click', function() {
+      const parts = ['contactus', 'btb', 'fit'];
+      window.location.href = 'mailto:' + parts[0] + '@' + parts[1] + '.' + parts[2];
     });
   </script>
 </body>
