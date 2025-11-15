@@ -16,6 +16,8 @@ let privacySettings = {
 };
 let entries = [];
 let isAuthenticated = false;
+let baselineEditMode = false;
+let profileEditMode = false;
 
 // Load user profile
 function loadUserProfile() {
@@ -73,6 +75,64 @@ function loadEntries() {
     console.error('Failed to load entries from localStorage:', e);
     return [];
   }
+}
+
+// Lock baseline fields
+function lockBaselineFields() {
+  document.getElementById('baseline-age-input').readOnly = true;
+  document.getElementById('baseline-weight-input').readOnly = true;
+  document.getElementById('baseline-weight-unit').disabled = true;
+  document.getElementById('baseline-height-ft').readOnly = true;
+  document.getElementById('baseline-height-in').readOnly = true;
+  document.getElementById('baseline-muscle-input').readOnly = true;
+  document.getElementById('baseline-body-fat-input').readOnly = true;
+  document.getElementById('baseline-body-water-input').readOnly = true;
+  document.getElementById('baseline-bone-mass-input').readOnly = true;
+  document.getElementById('baseline-bmr-input').readOnly = true;
+  
+  const submitBtn = document.querySelector('#baseline-form button[type="submit"]');
+  const editBtn = document.getElementById('edit-baseline-btn');
+  if (submitBtn) submitBtn.style.display = 'none';
+  if (editBtn) editBtn.style.display = 'inline-block';
+}
+
+// Unlock baseline fields
+function unlockBaselineFields() {
+  document.getElementById('baseline-age-input').readOnly = false;
+  document.getElementById('baseline-weight-input').readOnly = false;
+  document.getElementById('baseline-weight-unit').disabled = false;
+  document.getElementById('baseline-height-ft').readOnly = false;
+  document.getElementById('baseline-height-in').readOnly = false;
+  document.getElementById('baseline-muscle-input').readOnly = false;
+  document.getElementById('baseline-body-fat-input').readOnly = false;
+  document.getElementById('baseline-body-water-input').readOnly = false;
+  document.getElementById('baseline-bone-mass-input').readOnly = false;
+  document.getElementById('baseline-bmr-input').readOnly = false;
+  
+  const submitBtn = document.querySelector('#baseline-form button[type="submit"]');
+  const editBtn = document.getElementById('edit-baseline-btn');
+  if (submitBtn) submitBtn.style.display = 'inline-block';
+  if (editBtn) editBtn.style.display = 'none';
+}
+
+// Lock profile fields
+function lockProfileFields() {
+  document.getElementById('display-name-input').readOnly = true;
+  
+  const submitBtn = document.querySelector('#profile-form button[type="submit"]');
+  const editBtn = document.getElementById('edit-profile-btn');
+  if (submitBtn) submitBtn.style.display = 'none';
+  if (editBtn) editBtn.style.display = 'inline-block';
+}
+
+// Unlock profile fields
+function unlockProfileFields() {
+  document.getElementById('display-name-input').readOnly = false;
+  
+  const submitBtn = document.querySelector('#profile-form button[type="submit"]');
+  const editBtn = document.getElementById('edit-profile-btn');
+  if (submitBtn) submitBtn.style.display = 'inline-block';
+  if (editBtn) editBtn.style.display = 'none';
 }
 
 // Load baseline stats
@@ -161,6 +221,11 @@ function initSettings() {
   
   // Populate profile form
   document.getElementById('display-name-input').value = userProfile.displayName || '';
+  
+  // Lock profile field if display name exists
+  if (userProfile.displayName) {
+    lockProfileFields();
+  }
   
   // Set privacy toggle states
   document.getElementById('privacy-silhouette').checked = privacySettings.silhouette;
@@ -301,6 +366,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (baseline.bmr !== undefined) {
       document.getElementById('baseline-bmr-input').value = baseline.bmr;
     }
+    
+    // Lock baseline fields and show edit button
+    lockBaselineFields();
   }
 
   // Baseline stats form handler
@@ -344,9 +412,27 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     saveBaselineStats(baseline);
+    baselineEditMode = false;
+    lockBaselineFields();
     alert('Baseline stats saved successfully!');
     console.log('Saved baseline:', baseline);
   });
+  
+  // Add edit baseline button if it doesn't exist
+  const baselineForm = document.getElementById('baseline-form');
+  if (!document.getElementById('edit-baseline-btn')) {
+    const editBtn = document.createElement('button');
+    editBtn.type = 'button';
+    editBtn.id = 'edit-baseline-btn';
+    editBtn.className = 'btn secondary';
+    editBtn.textContent = 'Edit Baseline';
+    editBtn.style.display = 'none';
+    editBtn.addEventListener('click', () => {
+      baselineEditMode = true;
+      unlockBaselineFields();
+    });
+    baselineForm.querySelector('.form-footer').appendChild(editBtn);
+  }
 
   // Profile form handler
   document.getElementById('profile-form').addEventListener('submit', (e) => {
@@ -362,10 +448,28 @@ document.addEventListener('DOMContentLoaded', () => {
     userProfile.displayName = displayName;
     saveUserProfile();
     syncToCloud('profile', userProfile);
+    profileEditMode = false;
+    lockProfileFields();
     
     alert('Profile saved successfully!');
     console.log('Saved profile:', userProfile);
   });
+  
+  // Add edit profile button if it doesn't exist
+  const profileForm = document.getElementById('profile-form');
+  if (!document.getElementById('edit-profile-btn')) {
+    const editBtn = document.createElement('button');
+    editBtn.type = 'button';
+    editBtn.id = 'edit-profile-btn';
+    editBtn.className = 'btn secondary';
+    editBtn.textContent = 'Edit Name';
+    editBtn.style.display = 'none';
+    editBtn.addEventListener('click', () => {
+      profileEditMode = true;
+      unlockProfileFields();
+    });
+    profileForm.querySelector('.form-footer').appendChild(editBtn);
+  }
 
   // Privacy toggle event listeners
   document.getElementById('privacy-silhouette').addEventListener('change', (e) => {
