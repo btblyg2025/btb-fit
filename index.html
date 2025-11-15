@@ -110,6 +110,7 @@
           <input type="hidden" name="_subject" value="New contact from BTB Fit">
           <input type="hidden" name="_captcha" value="false">
           <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_next" value="https://btb.fit">
           <input type="text" name="_honey" style="display:none">
           
           <div class="form-group">
@@ -238,9 +239,7 @@
 
     // Form submission
     contactForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      // Validate
+      // Validate before allowing form to submit
       const emailErr = validateEmail(emailInput.value);
       const messageErr = validateMessage(messageInput.value);
       
@@ -248,42 +247,11 @@
       messageError.textContent = messageErr || '';
       
       if (emailErr || messageErr) {
-        return;
+        e.preventDefault();
+        return false;
       }
-
-      // Submit via AJAX
-      const formData = new FormData(contactForm);
       
-      fetch(contactForm.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
-      })
-      .then(response => {
-        if (response.ok) {
-          // Show success message
-          contactForm.style.display = 'none';
-          successDiv.style.display = 'block';
-          
-          // Reset form after 3 seconds and close modal
-          setTimeout(function() {
-            contactModal.style.display = 'none';
-            contactForm.style.display = 'block';
-            successDiv.style.display = 'none';
-            contactForm.reset();
-            emailError.textContent = '';
-            messageError.textContent = '';
-          }, 3000);
-        } else {
-          throw new Error('Failed to send message');
-        }
-      })
-      .catch(error => {
-        alert('Failed to send message. Please try again later.');
-        console.error('Error:', error);
-      });
+      // Let form submit naturally - FormSubmit will handle it and redirect back
     });
     }); // End DOMContentLoaded
   </script>
