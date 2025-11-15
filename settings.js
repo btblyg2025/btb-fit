@@ -77,64 +77,6 @@ function loadEntries() {
   }
 }
 
-// Lock baseline fields
-function lockBaselineFields() {
-  document.getElementById('baseline-age-input').readOnly = true;
-  document.getElementById('baseline-weight-input').readOnly = true;
-  document.getElementById('baseline-weight-unit').disabled = true;
-  document.getElementById('baseline-height-ft').readOnly = true;
-  document.getElementById('baseline-height-in').readOnly = true;
-  document.getElementById('baseline-muscle-input').readOnly = true;
-  document.getElementById('baseline-body-fat-input').readOnly = true;
-  document.getElementById('baseline-body-water-input').readOnly = true;
-  document.getElementById('baseline-bone-mass-input').readOnly = true;
-  document.getElementById('baseline-bmr-input').readOnly = true;
-  
-  const submitBtn = document.querySelector('#baseline-form button[type="submit"]');
-  const editBtn = document.getElementById('edit-baseline-btn');
-  if (submitBtn) submitBtn.style.display = 'none';
-  if (editBtn) editBtn.style.display = 'inline-block';
-}
-
-// Unlock baseline fields
-function unlockBaselineFields() {
-  document.getElementById('baseline-age-input').readOnly = false;
-  document.getElementById('baseline-weight-input').readOnly = false;
-  document.getElementById('baseline-weight-unit').disabled = false;
-  document.getElementById('baseline-height-ft').readOnly = false;
-  document.getElementById('baseline-height-in').readOnly = false;
-  document.getElementById('baseline-muscle-input').readOnly = false;
-  document.getElementById('baseline-body-fat-input').readOnly = false;
-  document.getElementById('baseline-body-water-input').readOnly = false;
-  document.getElementById('baseline-bone-mass-input').readOnly = false;
-  document.getElementById('baseline-bmr-input').readOnly = false;
-  
-  const submitBtn = document.querySelector('#baseline-form button[type="submit"]');
-  const editBtn = document.getElementById('edit-baseline-btn');
-  if (submitBtn) submitBtn.style.display = 'inline-block';
-  if (editBtn) editBtn.style.display = 'none';
-}
-
-// Lock profile fields
-function lockProfileFields() {
-  document.getElementById('display-name-input').readOnly = true;
-  
-  const submitBtn = document.querySelector('#profile-form button[type="submit"]');
-  const editBtn = document.getElementById('edit-profile-btn');
-  if (submitBtn) submitBtn.style.display = 'none';
-  if (editBtn) editBtn.style.display = 'inline-block';
-}
-
-// Unlock profile fields
-function unlockProfileFields() {
-  document.getElementById('display-name-input').readOnly = false;
-  
-  const submitBtn = document.querySelector('#profile-form button[type="submit"]');
-  const editBtn = document.getElementById('edit-profile-btn');
-  if (submitBtn) submitBtn.style.display = 'inline-block';
-  if (editBtn) editBtn.style.display = 'none';
-}
-
 // Load baseline stats
 function loadBaselineStats() {
   if (!currentUser) return null;
@@ -302,14 +244,6 @@ function initSettings() {
   // Update the saved data display
   updateSavedDataDisplay();
   
-  // Populate profile form
-  document.getElementById('display-name-input').value = userProfile.displayName || '';
-  
-  // Lock profile field if display name exists
-  if (userProfile.displayName) {
-    lockProfileFields();
-  }
-  
   // Set privacy toggle states
   document.getElementById('privacy-silhouette').checked = privacySettings.silhouette;
   document.getElementById('privacy-bmi').checked = privacySettings.bmi;
@@ -337,6 +271,178 @@ function lockSettings() {
   document.getElementById('error-message').style.display = 'none';
 }
 
+// Field editor handlers
+function showFieldEditor(fieldName) {
+  const container = document.getElementById('field-editor-container');
+  const content = document.getElementById('field-edit-content');
+  const baseline = loadBaselineStats();
+  const profile = userProfile;
+  
+  let html = '';
+  
+  switch(fieldName) {
+    case 'displayName':
+      html = `
+        <label>Display Name</label>
+        <input type="text" id="edit-field-input" value="${profile.displayName || ''}" placeholder="e.g. Brandon" maxlength="50" required>
+        <p style="font-size: 11px; color: #7c8aa9; margin-top: 4px;">
+          Public profile will show: "{Your Name}'s Fitness Journey"
+        </p>
+      `;
+      break;
+    case 'age':
+      html = `
+        <label>Age</label>
+        <input type="number" id="edit-field-input" value="${baseline?.age || ''}" min="13" max="120" placeholder="e.g., 25" required>
+      `;
+      break;
+    case 'height':
+      const heightCm = baseline?.height || 0;
+      const totalInches = heightCm / 2.54;
+      const feet = Math.floor(totalInches / 12);
+      const inches = (totalInches % 12).toFixed(1);
+      html = `
+        <label>Height</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="number" id="edit-field-ft" value="${heightCm ? feet : ''}" placeholder="ft" min="0" max="8" required>
+          <input type="number" id="edit-field-in" value="${heightCm ? inches : ''}" placeholder="in" min="0" max="11" step="0.5" required>
+        </div>
+      `;
+      break;
+    case 'weight':
+      html = `
+        <label>Weight</label>
+        <div class="input-group">
+          <input type="number" id="edit-field-input" value="${baseline?.weightDisplay || ''}" step="0.1" min="0" placeholder="e.g. 180" required>
+          <select id="edit-field-unit" class="unit-select">
+            <option value="lb" ${baseline?.weightUnit === 'lb' ? 'selected' : ''}>lb</option>
+            <option value="kg" ${baseline?.weightUnit === 'kg' ? 'selected' : ''}>kg</option>
+          </select>
+        </div>
+      `;
+      break;
+    case 'muscle':
+      html = `
+        <label>Muscle %</label>
+        <input type="number" id="edit-field-input" value="${baseline?.muscle || ''}" step="0.1" min="5" max="70" placeholder="e.g. 35">
+      `;
+      break;
+    case 'bodyFat':
+      html = `
+        <label>Body Fat %</label>
+        <input type="number" id="edit-field-input" value="${baseline?.bodyFat || ''}" step="0.1" min="3" max="60" placeholder="e.g. 18">
+      `;
+      break;
+    case 'bodyWater':
+      html = `
+        <label>Body Water %</label>
+        <input type="number" id="edit-field-input" value="${baseline?.bodyWater || ''}" step="0.1" min="35" max="75" placeholder="e.g. 55">
+      `;
+      break;
+    case 'boneMass':
+      const boneMassLb = baseline?.boneMass ? (baseline.boneMass * 2.20462).toFixed(1) : '';
+      html = `
+        <label>Bone Mass (lb)</label>
+        <input type="number" id="edit-field-input" value="${boneMassLb}" step="0.1" min="2" max="20" placeholder="e.g. 6.5">
+      `;
+      break;
+    case 'bmr':
+      html = `
+        <label>BMR (cal/day)</label>
+        <input type="number" id="edit-field-input" value="${baseline?.bmr || ''}" step="1" min="800" max="4000" placeholder="e.g. 1650">
+      `;
+      break;
+  }
+  
+  content.innerHTML = html;
+  container.style.display = 'block';
+}
+
+function hideFieldEditor() {
+  document.getElementById('field-editor-container').style.display = 'none';
+  document.getElementById('field-selector').value = '';
+}
+
+function saveFieldEdit(e) {
+  e.preventDefault();
+  
+  const fieldName = document.getElementById('field-selector').value;
+  if (!fieldName) return;
+  
+  const baseline = loadBaselineStats() || {};
+  const profile = userProfile;
+  
+  switch(fieldName) {
+    case 'displayName':
+      const displayName = document.getElementById('edit-field-input').value.trim();
+      const validation = validateDisplayName(displayName);
+      if (!validation.valid) {
+        alert(validation.error);
+        return;
+      }
+      userProfile.displayName = displayName;
+      saveUserProfile();
+      syncToCloud('profile', userProfile);
+      break;
+      
+    case 'age':
+      baseline.age = parseInt(document.getElementById('edit-field-input').value);
+      saveBaselineStats(baseline);
+      break;
+      
+    case 'height':
+      const feet = parseFloat(document.getElementById('edit-field-ft').value);
+      const inches = parseFloat(document.getElementById('edit-field-in').value);
+      const totalInches = (feet * 12) + inches;
+      baseline.height = totalInches * 2.54;
+      saveBaselineStats(baseline);
+      break;
+      
+    case 'weight':
+      const weightInput = parseFloat(document.getElementById('edit-field-input').value);
+      const weightUnit = document.getElementById('edit-field-unit').value;
+      baseline.weightDisplay = weightInput;
+      baseline.weightUnit = weightUnit;
+      baseline.weight = weightUnit === 'lb' ? weightInput / 2.20462 : weightInput;
+      saveBaselineStats(baseline);
+      break;
+      
+    case 'muscle':
+      const muscle = parseFloat(document.getElementById('edit-field-input').value);
+      baseline.muscle = isNaN(muscle) ? undefined : muscle;
+      saveBaselineStats(baseline);
+      break;
+      
+    case 'bodyFat':
+      const bodyFat = parseFloat(document.getElementById('edit-field-input').value);
+      baseline.bodyFat = isNaN(bodyFat) ? undefined : bodyFat;
+      saveBaselineStats(baseline);
+      break;
+      
+    case 'bodyWater':
+      const bodyWater = parseFloat(document.getElementById('edit-field-input').value);
+      baseline.bodyWater = isNaN(bodyWater) ? undefined : bodyWater;
+      saveBaselineStats(baseline);
+      break;
+      
+    case 'boneMass':
+      const boneMassLb = parseFloat(document.getElementById('edit-field-input').value);
+      baseline.boneMass = isNaN(boneMassLb) ? undefined : boneMassLb * 0.45359237;
+      saveBaselineStats(baseline);
+      break;
+      
+    case 'bmr':
+      const bmr = parseFloat(document.getElementById('edit-field-input').value);
+      baseline.bmr = isNaN(bmr) ? undefined : bmr;
+      saveBaselineStats(baseline);
+      break;
+  }
+  
+  updateSavedDataDisplay();
+  hideFieldEditor();
+  alert('Field updated successfully!');
+}
+
 // On DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Settings page loaded');
@@ -356,6 +462,22 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('view-profile-btn').addEventListener('click', () => {
     window.open('index.html', '_blank');
   });
+  
+  // Field selector change handler
+  document.getElementById('field-selector').addEventListener('change', (e) => {
+    const fieldName = e.target.value;
+    if (fieldName) {
+      showFieldEditor(fieldName);
+    } else {
+      hideFieldEditor();
+    }
+  });
+  
+  // Field edit form submit handler
+  document.getElementById('field-edit-form').addEventListener('submit', saveFieldEdit);
+  
+  // Cancel button handler
+  document.getElementById('cancel-field-edit').addEventListener('click', hideFieldEditor);
   
   // Check if already authenticated
   const authToken = sessionStorage.getItem('btb_auth_token');
@@ -414,219 +536,6 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.textContent = 'Login';
     }
   });
-
-  // Load baseline stats if available
-  const baseline = loadBaselineStats();
-  if (baseline) {
-    if (baseline.age !== undefined) {
-      document.getElementById('baseline-age-input').value = baseline.age;
-    }
-    if (baseline.weight) {
-      document.getElementById('baseline-weight-input').value = baseline.weightDisplay;
-      document.getElementById('baseline-weight-unit').value = baseline.weightUnit || 'lb';
-    }
-    if (baseline.height) {
-      const totalInches = baseline.height / 2.54;
-      const feet = Math.floor(totalInches / 12);
-      const inches = (totalInches % 12).toFixed(1);
-      document.getElementById('baseline-height-ft').value = feet;
-      document.getElementById('baseline-height-in').value = inches;
-    }
-    if (baseline.muscle !== undefined) {
-      document.getElementById('baseline-muscle-input').value = baseline.muscle;
-    }
-    if (baseline.bodyFat !== undefined) {
-      document.getElementById('baseline-body-fat-input').value = baseline.bodyFat;
-    }
-    if (baseline.bodyWater !== undefined) {
-      document.getElementById('baseline-body-water-input').value = baseline.bodyWater;
-    }
-    if (baseline.boneMass !== undefined) {
-      // Convert from kg to lb for display
-      const boneMassLb = baseline.boneMass * 2.20462;
-      document.getElementById('baseline-bone-mass-input').value = boneMassLb.toFixed(1);
-    }
-    if (baseline.bmr !== undefined) {
-      document.getElementById('baseline-bmr-input').value = baseline.bmr;
-    }
-    
-    // Lock baseline fields and show edit button
-    lockBaselineFields();
-  }
-
-  // Baseline stats form handler
-  document.getElementById('baseline-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const age = parseInt(document.getElementById('baseline-age-input').value);
-    const weightInput = parseFloat(document.getElementById('baseline-weight-input').value);
-    const weightUnit = document.getElementById('baseline-weight-unit').value;
-    const heightFt = parseFloat(document.getElementById('baseline-height-ft').value);
-    const heightIn = parseFloat(document.getElementById('baseline-height-in').value);
-    const muscle = parseFloat(document.getElementById('baseline-muscle-input').value);
-    const bodyFat = parseFloat(document.getElementById('baseline-body-fat-input').value);
-    const bodyWater = parseFloat(document.getElementById('baseline-body-water-input').value);
-    let boneMass = parseFloat(document.getElementById('baseline-bone-mass-input').value);
-    const bmr = parseFloat(document.getElementById('baseline-bmr-input').value);
-    
-    // Convert weight to kg for storage
-    const weightKg = weightUnit === 'lb' ? weightInput / 2.20462 : weightInput;
-    
-    // Convert height to cm
-    const totalInches = (heightFt * 12) + heightIn;
-    const heightCm = totalInches * 2.54;
-    
-    // Convert bone mass from lb to kg if provided
-    if (!isNaN(boneMass)) {
-      boneMass = boneMass * 0.45359237;
-    }
-    
-    const baseline = {
-      age: age,
-      weight: weightKg,
-      weightDisplay: weightInput,
-      weightUnit: weightUnit,
-      height: heightCm,
-      muscle: isNaN(muscle) ? undefined : muscle,
-      bodyFat: isNaN(bodyFat) ? undefined : bodyFat,
-      bodyWater: isNaN(bodyWater) ? undefined : bodyWater,
-      boneMass: isNaN(boneMass) ? undefined : boneMass,
-      bmr: isNaN(bmr) ? undefined : bmr
-    };
-    
-    saveBaselineStats(baseline);
-    console.log('Baseline saved, now updating display...');
-    
-    // Repopulate fields with saved values
-    document.getElementById('baseline-age-input').value = baseline.age;
-    document.getElementById('baseline-weight-input').value = baseline.weightDisplay;
-    document.getElementById('baseline-weight-unit').value = baseline.weightUnit;
-    const totalInchesDisplay = baseline.height / 2.54;
-    const feetDisplay = Math.floor(totalInchesDisplay / 12);
-    const inchesDisplay = (totalInchesDisplay % 12).toFixed(1);
-    document.getElementById('baseline-height-ft').value = feetDisplay;
-    document.getElementById('baseline-height-in').value = inchesDisplay;
-    if (baseline.muscle !== undefined) {
-      document.getElementById('baseline-muscle-input').value = baseline.muscle;
-    }
-    if (baseline.bodyFat !== undefined) {
-      document.getElementById('baseline-body-fat-input').value = baseline.bodyFat;
-    }
-    if (baseline.bodyWater !== undefined) {
-      document.getElementById('baseline-body-water-input').value = baseline.bodyWater;
-    }
-    if (baseline.boneMass !== undefined) {
-      const boneMassLb = baseline.boneMass * 2.20462;
-      document.getElementById('baseline-bone-mass-input').value = boneMassLb.toFixed(1);
-    }
-    if (baseline.bmr !== undefined) {
-      document.getElementById('baseline-bmr-input').value = baseline.bmr;
-    }
-    
-    baselineEditMode = false;
-    lockBaselineFields();
-    
-    // Update the display at the top - directly
-    const ageDisplay = document.getElementById('age-display');
-    if (ageDisplay) {
-      ageDisplay.textContent = baseline.age + ' years';
-      ageDisplay.style.color = '#34e27c';
-    }
-    
-    const heightDisplay = document.getElementById('height-display');
-    if (heightDisplay) {
-      const totalIn = baseline.height / 2.54;
-      const ft = Math.floor(totalIn / 12);
-      const inches = Math.round(totalIn % 12);
-      heightDisplay.textContent = `${ft}'${inches}"`;
-      heightDisplay.style.color = '#34e27c';
-    }
-    
-    const weightDisplay = document.getElementById('weight-display');
-    if (weightDisplay) {
-      weightDisplay.textContent = `${baseline.weightDisplay} ${baseline.weightUnit}`;
-      weightDisplay.style.color = '#34e27c';
-    }
-    
-    const muscleDisplay = document.getElementById('muscle-display');
-    if (muscleDisplay && baseline.muscle) {
-      muscleDisplay.textContent = baseline.muscle + '%';
-      muscleDisplay.style.color = '#34e27c';
-    }
-    
-    const bodyFatDisplay = document.getElementById('body-fat-display');
-    if (bodyFatDisplay && baseline.bodyFat) {
-      bodyFatDisplay.textContent = baseline.bodyFat + '%';
-      bodyFatDisplay.style.color = '#34e27c';
-    }
-    
-    alert('Baseline stats saved successfully!');
-    console.log('Saved baseline:', baseline);
-  });
-  
-  // Add edit baseline button if it doesn't exist
-  const baselineForm = document.getElementById('baseline-form');
-  if (!document.getElementById('edit-baseline-btn')) {
-    const editBtn = document.createElement('button');
-    editBtn.type = 'button';
-    editBtn.id = 'edit-baseline-btn';
-    editBtn.className = 'btn secondary';
-    editBtn.textContent = 'Edit Baseline';
-    editBtn.style.display = 'none';
-    editBtn.addEventListener('click', () => {
-      baselineEditMode = true;
-      unlockBaselineFields();
-    });
-    baselineForm.querySelector('.form-footer').appendChild(editBtn);
-  }
-
-  // Profile form handler
-  document.getElementById('profile-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const displayName = document.getElementById('display-name-input').value.trim();
-    
-    const validation = validateDisplayName(displayName);
-    if (!validation.valid) {
-      alert(validation.error);
-      return;
-    }
-    
-    userProfile.displayName = displayName;
-    saveUserProfile();
-    syncToCloud('profile', userProfile);
-    
-    // Repopulate field with saved value
-    document.getElementById('display-name-input').value = displayName;
-    
-    // Update display directly
-    const displayNameEl = document.getElementById('display-name-display');
-    if (displayNameEl) {
-      displayNameEl.textContent = displayName;
-      displayNameEl.style.color = '#34e27c';
-    }
-    
-    profileEditMode = false;
-    lockProfileFields();
-    
-    alert('Profile saved successfully!');
-    console.log('Saved profile:', userProfile);
-  });
-  
-  // Add edit profile button if it doesn't exist
-  const profileForm = document.getElementById('profile-form');
-  if (!document.getElementById('edit-profile-btn')) {
-    const editBtn = document.createElement('button');
-    editBtn.type = 'button';
-    editBtn.id = 'edit-profile-btn';
-    editBtn.className = 'btn secondary';
-    editBtn.textContent = 'Edit Name';
-    editBtn.style.display = 'none';
-    editBtn.addEventListener('click', () => {
-      profileEditMode = true;
-      unlockProfileFields();
-    });
-    profileForm.querySelector('.form-footer').appendChild(editBtn);
-  }
 
   // Privacy toggle event listeners
   document.getElementById('privacy-silhouette').addEventListener('change', (e) => {

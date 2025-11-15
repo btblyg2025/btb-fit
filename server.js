@@ -32,4 +32,8 @@ app.get('/settings', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`PASSWORD_HASH is ${process.env.PASSWORD_HASH ? 'SET' : 'NOT SET'}`);
+  if (process.env.PASSWORD_HASH) {
+    console.log(`PASSWORD_HASH length: ${process.env.PASSWORD_HASH.length}`);
+  }
 });

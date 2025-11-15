@@ -336,6 +336,32 @@ function saveUserProfile() {
   }
 }
 
+// Validate that minimum baseline stats are set (age, weight, height)
+function validateMinimumBaseline() {
+  const baseline = loadBaselineStats();
+  
+  if (!baseline) {
+    return {
+      valid: false,
+      message: 'Please set your baseline stats in Settings first. Age, Weight, and Height are required before creating entries.'
+    };
+  }
+  
+  const missing = [];
+  if (!baseline.age) missing.push('Age');
+  if (!baseline.weight) missing.push('Weight');
+  if (!baseline.height) missing.push('Height');
+  
+  if (missing.length > 0) {
+    return {
+      valid: false,
+      message: `Please set the following required baseline stats in Settings first: ${missing.join(', ')}`
+    };
+  }
+  
+  return { valid: true, message: '' };
+}
+
 // Load baseline stats
 function loadBaselineStats() {
   if (!currentUser) return null;
@@ -1161,6 +1187,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Entry form handler (stats: date, weight, height, muscle, body composition)
   document.getElementById('entry-form').addEventListener('submit', (e) => {
     e.preventDefault();
+    
+    // Validate minimum baseline stats first
+    const baselineCheck = validateMinimumBaseline();
+    if (!baselineCheck.valid) {
+      alert(baselineCheck.message);
+      return;
+    }
+    
     const date = document.getElementById('date-input').value;
     let weight = parseFloat(document.getElementById('weight-input').value);
     const heightFeet = parseFloat(document.getElementById('height-feet').value);
@@ -1288,6 +1322,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Hydration form handler
   document.getElementById('hydration-form').addEventListener('submit', (e) => {
     e.preventDefault();
+    
+    // Validate minimum baseline stats first
+    const baselineCheck = validateMinimumBaseline();
+    if (!baselineCheck.valid) {
+      alert(baselineCheck.message);
+      return;
+    }
+    
     const date = document.getElementById('date-input').value;
     const waterToAdd = parseFloat(document.getElementById('water-input').value) || 0;
     
@@ -1315,6 +1357,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Workout form handler
   document.getElementById('workout-form').addEventListener('submit', (e) => {
     e.preventDefault();
+    
+    // Validate minimum baseline stats first
+    const baselineCheck = validateMinimumBaseline();
+    if (!baselineCheck.valid) {
+      alert(baselineCheck.message);
+      return;
+    }
+    
     const date = document.getElementById('date-input').value;
     const workoutType = document.getElementById('workout-type').value;
     const duration = parseInt(document.getElementById('workout-duration').value);
@@ -1412,6 +1462,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Nutrition form handler
   document.getElementById('nutrition-form').addEventListener('submit', (e) => {
     e.preventDefault();
+    
+    // Validate minimum baseline stats first
+    const baselineCheck = validateMinimumBaseline();
+    if (!baselineCheck.valid) {
+      alert(baselineCheck.message);
+      return;
+    }
+    
     const date = document.getElementById('date-input').value;
     const proteinToAdd = parseFloat(document.getElementById('protein-input').value) || 0;
     const carbsToAdd = parseFloat(document.getElementById('carbs-input').value) || 0;
