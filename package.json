@@ -11,6 +11,9 @@
   "keywords": ["fitness", "tracking", "health", "bmi", "body-stats"],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3"
+  },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "jest": "^30.2.0",

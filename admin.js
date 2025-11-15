@@ -1,6 +1,5 @@
 // Admin script for btb.fit - Password protected data entry
 
-const ADMIN_PASSWORD = 'faj3*fneiaksdhal89-32sa0+'; // Your secure password
 const ADMIN_USER = 'btbga'; // Your username
 
 let currentUser = ADMIN_USER;
@@ -850,14 +849,38 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Password form handler
-  document.getElementById('password-form').addEventListener('submit', (e) => {
+  document.getElementById('password-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const password = document.getElementById('password-input').value;
-    if (password === ADMIN_PASSWORD) {
-      unlockAdmin();
-    } else {
-      document.getElementById('error-message').style.display = 'block';
-      document.getElementById('password-input').value = '';
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const errorMsg = document.getElementById('error-message');
+    
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Verifying...';
+    errorMsg.style.display = 'none';
+    
+    try {
+      const response = await fetch('/.netlify/functions/verify-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: password })
+      });
+      
+      const data = await response.json();
+      
+      if (data.valid) {
+        unlockAdmin();
+      } else {
+        errorMsg.style.display = 'block';
+        document.getElementById('password-input').value = '';
+      }
+    } catch (error) {
+      errorMsg.textContent = 'Authentication error. Please try again.';
+      errorMsg.style.display = 'block';
+      console.error('Auth error:', error);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Login';
     }
   });
 
