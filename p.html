@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading...</title>
+  <script>
+    // Redirect to profile with timestamp to bust cache
+    const timestamp = new Date().getTime();
+    window.location.replace('profile.html?t=' + timestamp);
+  </script>
+</head>
+<body>
+  <p>Loading profile...</p>
+</body>
+</html>
