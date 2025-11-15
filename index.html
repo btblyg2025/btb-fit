@@ -105,15 +105,21 @@
       <div class="modal-content">
         <span class="modal-close" id="close-modal">&times;</span>
         <h2>Contact Us</h2>
-        <form id="contact-form">
+        <form id="contact-form" action="https://formsubmit.co/contactus@btb.fit" method="POST">
+          <!-- FormSubmit Configuration -->
+          <input type="hidden" name="_subject" value="New contact from BTB Fit">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_template" value="table">
+          <input type="text" name="_honey" style="display:none">
+          
           <div class="form-group">
             <label for="contact-email">Your Email</label>
-            <input type="email" id="contact-email" required placeholder="your.email@example.com">
+            <input type="email" id="contact-email" name="email" required placeholder="your.email@example.com">
             <span class="error-message" id="email-error"></span>
           </div>
           <div class="form-group">
             <label for="contact-message">Message</label>
-            <textarea id="contact-message" required rows="6" placeholder="Type your message here..."></textarea>
+            <textarea id="contact-message" name="message" required rows="6" placeholder="Type your message here..."></textarea>
             <span class="error-message" id="message-error"></span>
           </div>
           <div class="form-footer">
@@ -244,30 +250,39 @@
         return;
       }
 
-      // Construct mailto URL with obfuscated email
-      const parts = ['contactus', 'btb', 'fit'];
-      const recipientEmail = parts[0] + '@' + parts[1] + '.' + parts[2];
-      const subject = encodeURIComponent('Contact Form Message from BTB Fit');
-      const body = encodeURIComponent(
-        `From: ${emailInput.value}\n\n${messageInput.value}`
-      );
+      // Submit via AJAX
+      const formData = new FormData(contactForm);
       
-      // Open mailto link
-      window.location.href = `mailto:${recipientEmail}?subject=${subject}&body=${body}`;
-      
-      // Show success message
-      contactForm.style.display = 'none';
-      successDiv.style.display = 'block';
-      
-      // Reset form after 3 seconds and close modal
-      setTimeout(function() {
-        contactModal.style.display = 'none';
-        contactForm.style.display = 'block';
-        successDiv.style.display = 'none';
-        contactForm.reset();
-        emailError.textContent = '';
-        messageError.textContent = '';
-      }, 3000);
+      fetch(contactForm.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          // Show success message
+          contactForm.style.display = 'none';
+          successDiv.style.display = 'block';
+          
+          // Reset form after 3 seconds and close modal
+          setTimeout(function() {
+            contactModal.style.display = 'none';
+            contactForm.style.display = 'block';
+            successDiv.style.display = 'none';
+            contactForm.reset();
+            emailError.textContent = '';
+            messageError.textContent = '';
+          }, 3000);
+        } else {
+          throw new Error('Failed to send message');
+        }
+      })
+      .catch(error => {
+        alert('Failed to send message. Please try again later.');
+        console.error('Error:', error);
+      });
     });
   </script>
 </body>
