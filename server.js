@@ -35,6 +35,11 @@ app.post('/api/load-data', loadData);
 // Serve HTML files
 app.get('/', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.sendFile(path.join(__dirname, 'leaderboard.html'));
+});
+
+app.get('/tracker', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 

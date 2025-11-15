@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>btb.fit – Leaderboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="logo-container">
+        <img src="assets/logo.png" alt="BTB Logo" class="logo-img" id="secret-admin-link" style="cursor: pointer;" title="btb.fit">
+        <div class="brand">
+          <span class="brand-name">btb<span class="dot">.fit</span></span>
+          <span class="brand-tag">Body Tracking Benchmark</span>
+        </div>
+      </div>
+      <div class="user-bar">
+        <span>Fitness Leaderboard</span>
+      </div>
+    </header>
+    <main>
+      <div class="card">
+        <h2>Weight Loss Leaders</h2>
+        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+          <button class="time-filter active" data-period="week">Week</button>
+          <button class="time-filter" data-period="month">Month</button>
+          <button class="time-filter" data-period="3months">3 Months</button>
+          <button class="time-filter" data-period="year">Year</button>
+        </div>
+        <div id="leaderboard-list">
+          <!-- Users will be dynamically loaded here -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="leaderboard.js"></script>
+</body>
+</html>

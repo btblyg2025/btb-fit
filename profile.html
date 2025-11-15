@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>btb.fit – Public Profile</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js for graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="logo-container">
+        <img src="assets/logo.png" alt="BTB Logo" class="logo-img" id="secret-admin-link" style="cursor: pointer;" title="btb.fit">
+        <div class="brand">
+          <span class="brand-name">btb<span class="dot">.fit</span></span>
+          <span class="brand-tag">Body Tracking Benchmark</span>
+        </div>
+      </div>
+      <div class="user-bar">
+        <span id="profile-user"></span>
+      </div>
+    </header>
+    <main>
+      <div class="charts-grid">
+        <!-- Row 1 -->
+        <div class="card silhouette-card" id="silhouette-card">
+          <h2>User silhouette</h2>
+          <div class="silhouette-wrapper">
+            <img id="profile-silhouette" class="silhouette-img" src="assets/male_silhouette_black.png" alt="Silhouette">
+            <div class="silhouette-info">
+              <p><strong>BMI:</strong> <span id="profile-bmi">–</span></p>
+              <p><strong>Status:</strong> <span id="profile-status">–</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="bmi-card">
+          <h2>BMI Over Time</h2>
+          <canvas id="profile-bmi-chart"></canvas>
+        </div>
+        
+        <!-- Row 2 -->
+        <div class="card" id="progress-card">
+          <h2>Progress over time</h2>
+          <canvas id="profile-chart"></canvas>
+        </div>
+        
+        <div class="card" id="athletic-card">
+          <h2>Athleticism Score</h2>
+          <canvas id="profile-athletic-chart"></canvas>
+        </div>
+        
+        <!-- Row 3 -->
+        <div class="card" id="water-card">
+          <h2>Water Intake</h2>
+          <canvas id="profile-water-chart"></canvas>
+        </div>
+        
+        <div class="card" id="macros-card">
+          <h2>Daily Macros</h2>
+          <canvas id="public-macros-chart"></canvas>
+        </div>
+        
+        <!-- Row 4 -->
+        <div class="card" id="body-comp-card">
+          <h2>Body Composition</h2>
+          <canvas id="public-body-comp-chart"></canvas>
+        </div>
+        
+        <div class="card" id="projections-module">
+          <h2>Weight Projections</h2>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 16px;">
+            <div>
+              <p style="font-size: 12px; color: #9aa8c7;">7 Days</p>
+              <p id="public-proj-7" style="font-size: 20px; font-weight: 600; color: #34e27c;">–</p>
+              <p id="public-proj-change-7" style="font-size: 14px;"></p>
+            </div>
+            <div>
+              <p style="font-size: 12px; color: #9aa8c7;">15 Days</p>
+              <p id="public-proj-15" style="font-size: 20px; font-weight: 600; color: #34e27c;">–</p>
+              <p id="public-proj-change-15" style="font-size: 14px;"></p>
+            </div>
+            <div>
+              <p style="font-size: 12px; color: #9aa8c7;">30 Days</p>
+              <p id="public-proj-30" style="font-size: 20px; font-weight: 600; color: #34e27c;">–</p>
+              <p id="public-proj-change-30" style="font-size: 14px;"></p>
+            </div>
+            <div>
+              <p style="font-size: 12px; color: #9aa8c7;">180 Days</p>
+              <p id="public-proj-180" style="font-size: 20px; font-weight: 600; color: #34e27c;">–</p>
+              <p id="public-proj-change-180" style="font-size: 14px;"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="public-profile.js"></script>
+</body>
+</html>

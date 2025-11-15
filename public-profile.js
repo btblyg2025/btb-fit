@@ -702,4 +702,12 @@ document.addEventListener('DOMContentLoaded', () => {
   updateBodyCompChart();
   calculatePublicProjections();
   applyPrivacySettings();
+  
+  // Admin link on logo click
+  const adminLink = document.getElementById('secret-admin-link');
+  if (adminLink) {
+    adminLink.addEventListener('click', () => {
+      window.location.href = 'admin.html';
+    });
+  }
 });
