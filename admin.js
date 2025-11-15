@@ -102,7 +102,7 @@ async function syncToCloud(dataType, data) {
   if (!token) return; // Not authenticated, skip cloud sync
   
   try {
-    const response = await fetch('/.netlify/functions/save-data', {
+    const response = await fetch('/api/save-data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token, dataType, data })
@@ -125,7 +125,7 @@ async function loadFromCloud(dataType) {
   if (!token) return null;
   
   try {
-    const response = await fetch('/.netlify/functions/load-data', {
+    const response = await fetch('/api/load-data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token, dataType })
@@ -1133,7 +1133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     errorMsg.style.display = 'none';
     
     try {
-      const response = await fetch('/.netlify/functions/verify-password', {
+      const response = await fetch('/api/verify-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: password })

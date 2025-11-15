@@ -164,7 +164,7 @@ async function syncToCloud(dataType, data) {
   if (!token) return;
   
   try {
-    const response = await fetch('/.netlify/functions/save-data', {
+    const response = await fetch('/api/save-data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token, dataType, data })
@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     try {
       console.log('Calling API...');
-      const response = await fetch('/.netlify/functions/verify-password', {
+      const response = await fetch('/api/verify-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: password })
