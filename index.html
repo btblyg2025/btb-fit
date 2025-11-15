@@ -137,21 +137,22 @@
   <!-- Our script -->
   <script src="public-profile.js"></script>
   <script>
-    // Secret admin access - click logo to go to admin page
-    document.getElementById('secret-admin-link').addEventListener('click', function() {
-      window.location.href = 'admin.html';
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+      // Secret admin access - click logo to go to admin page
+      document.getElementById('secret-admin-link').addEventListener('click', function() {
+        window.location.href = 'admin.html';
+      });
 
-    // Contact modal functionality
-    const contactBtn = document.getElementById('contact-btn');
-    const contactModal = document.getElementById('contact-modal');
-    const closeModal = document.getElementById('close-modal');
-    const contactForm = document.getElementById('contact-form');
-    const emailInput = document.getElementById('contact-email');
-    const messageInput = document.getElementById('contact-message');
-    const emailError = document.getElementById('email-error');
-    const messageError = document.getElementById('message-error');
-    const successDiv = document.getElementById('contact-success');
+      // Contact modal functionality
+      const contactBtn = document.getElementById('contact-btn');
+      const contactModal = document.getElementById('contact-modal');
+      const closeModal = document.getElementById('close-modal');
+      const contactForm = document.getElementById('contact-form');
+      const emailInput = document.getElementById('contact-email');
+      const messageInput = document.getElementById('contact-message');
+      const emailError = document.getElementById('email-error');
+      const messageError = document.getElementById('message-error');
+      const successDiv = document.getElementById('contact-success');
 
     // Email validation regex
     const emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
@@ -284,6 +285,7 @@
         console.error('Error:', error);
       });
     });
+    }); // End DOMContentLoaded
   </script>
 </body>
 </html>
