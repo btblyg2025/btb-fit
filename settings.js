@@ -172,6 +172,22 @@ function lockSettings() {
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Settings page loaded');
   
+  // Attach button event listeners first (always needed)
+  // Lock button
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    lockSettings();
+  });
+
+  // Back to admin button
+  document.getElementById('back-to-admin-btn').addEventListener('click', () => {
+    window.location.href = 'admin.html';
+  });
+
+  // View public profile button
+  document.getElementById('view-profile-btn').addEventListener('click', () => {
+    window.open('index.html', '_blank');
+  });
+  
   // Check if already authenticated
   const authToken = sessionStorage.getItem('btb_auth_token');
   if (authToken) {
@@ -228,21 +244,6 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Login';
     }
-  });
-
-  // Lock button
-  document.getElementById('logout-btn').addEventListener('click', () => {
-    lockSettings();
-  });
-
-  // Back to admin button
-  document.getElementById('back-to-admin-btn').addEventListener('click', () => {
-    window.location.href = 'admin.html';
-  });
-
-  // View public profile button
-  document.getElementById('view-profile-btn').addEventListener('click', () => {
-    window.open('index.html', '_blank');
   });
 
   // Load baseline stats if available
