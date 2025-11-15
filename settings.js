@@ -313,6 +313,43 @@ function initSettings() {
     cancelBtn.addEventListener('click', hideFieldEditor);
   }
   
+  // Privacy toggle event listeners
+  document.getElementById('privacy-silhouette').addEventListener('change', (e) => {
+    privacySettings.silhouette = e.target.checked;
+    savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
+  });
+  document.getElementById('privacy-bmi').addEventListener('change', (e) => {
+    privacySettings.bmi = e.target.checked;
+    savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
+  });
+  document.getElementById('privacy-progress').addEventListener('change', (e) => {
+    privacySettings.progress = e.target.checked;
+    savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
+  });
+  document.getElementById('privacy-athleticism').addEventListener('change', (e) => {
+    privacySettings.athleticism = e.target.checked;
+    savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
+  });
+  document.getElementById('privacy-water').addEventListener('change', (e) => {
+    privacySettings.water = e.target.checked;
+    savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
+  });
+  document.getElementById('privacy-macros').addEventListener('change', (e) => {
+    privacySettings.macros = e.target.checked;
+    savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
+  });
+  document.getElementById('privacy-projections').addEventListener('change', (e) => {
+    privacySettings.projections = e.target.checked;
+    savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
+  });
+  
   console.log('initSettings complete');
 }
 
@@ -603,43 +640,6 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Login';
     }
-  });
-
-  // Privacy toggle event listeners
-  document.getElementById('privacy-silhouette').addEventListener('change', (e) => {
-    privacySettings.silhouette = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
-  });
-  document.getElementById('privacy-bmi').addEventListener('change', (e) => {
-    privacySettings.bmi = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
-  });
-  document.getElementById('privacy-progress').addEventListener('change', (e) => {
-    privacySettings.progress = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
-  });
-  document.getElementById('privacy-athleticism').addEventListener('change', (e) => {
-    privacySettings.athleticism = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
-  });
-  document.getElementById('privacy-water').addEventListener('change', (e) => {
-    privacySettings.water = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
-  });
-  document.getElementById('privacy-macros').addEventListener('change', (e) => {
-    privacySettings.macros = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
-  });
-  document.getElementById('privacy-projections').addEventListener('change', (e) => {
-    privacySettings.projections = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
   });
 
   // Export button
