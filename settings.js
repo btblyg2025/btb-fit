@@ -345,6 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     saveBaselineStats(baseline);
     alert('Baseline stats saved successfully!');
+    console.log('Saved baseline:', baseline);
   });
 
   // Profile form handler
@@ -360,38 +361,47 @@ document.addEventListener('DOMContentLoaded', () => {
     
     userProfile.displayName = displayName;
     saveUserProfile();
+    syncToCloud('profile', userProfile);
     
     alert('Profile saved successfully!');
+    console.log('Saved profile:', userProfile);
   });
 
   // Privacy toggle event listeners
   document.getElementById('privacy-silhouette').addEventListener('change', (e) => {
     privacySettings.silhouette = e.target.checked;
     savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
   });
   document.getElementById('privacy-bmi').addEventListener('change', (e) => {
     privacySettings.bmi = e.target.checked;
     savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
   });
   document.getElementById('privacy-progress').addEventListener('change', (e) => {
     privacySettings.progress = e.target.checked;
     savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
   });
   document.getElementById('privacy-athleticism').addEventListener('change', (e) => {
     privacySettings.athleticism = e.target.checked;
     savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
   });
   document.getElementById('privacy-water').addEventListener('change', (e) => {
     privacySettings.water = e.target.checked;
     savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
   });
   document.getElementById('privacy-macros').addEventListener('change', (e) => {
     privacySettings.macros = e.target.checked;
     savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
   });
   document.getElementById('privacy-projections').addEventListener('change', (e) => {
     privacySettings.projections = e.target.checked;
     savePrivacySettings();
+    syncToCloud('privacy', privacySettings);
   });
 
   // Export button

@@ -1019,6 +1019,46 @@ async function initAdmin() {
   const todayStr = formatDate(new Date());
   document.getElementById('date-input').value = todayStr;
   
+  // Load and display baseline stats
+  const baseline = loadBaselineStats();
+  if (baseline) {
+    console.log('Loaded baseline stats:', baseline);
+    
+    // Update welcome message with display name if available
+    if (userProfile.displayName) {
+      document.getElementById('welcome-message').textContent = `Welcome, ${userProfile.displayName}`;
+    }
+    
+    // Pre-fill height from baseline as placeholder hint
+    if (baseline.height && !isNaN(baseline.height)) {
+      const totalInches = baseline.height / 2.54;
+      const feet = Math.floor(totalInches / 12);
+      const inches = Math.round((totalInches % 12) * 10) / 10;
+      document.getElementById('height-feet').placeholder = `${feet} ft (baseline)`;
+      document.getElementById('height-inches').placeholder = `${inches} in (baseline)`;
+    }
+    
+    // Pre-fill body composition from baseline as placeholder hints
+    if (baseline.muscle && !isNaN(baseline.muscle)) {
+      document.getElementById('muscle-input').placeholder = `${baseline.muscle}% (baseline)`;
+    }
+    if (baseline.bodyFat && !isNaN(baseline.bodyFat)) {
+      document.getElementById('body-fat-input').placeholder = `${baseline.bodyFat}% (baseline)`;
+    }
+    if (baseline.bodyWater && !isNaN(baseline.bodyWater)) {
+      document.getElementById('body-water-input').placeholder = `${baseline.bodyWater}% (baseline)`;
+    }
+    if (baseline.boneMass && !isNaN(baseline.boneMass)) {
+      const boneMassLb = (baseline.boneMass * 2.20462).toFixed(1);
+      document.getElementById('bone-mass-input').placeholder = `${boneMassLb} lb (baseline)`;
+    }
+    if (baseline.bmr && !isNaN(baseline.bmr)) {
+      document.getElementById('bmr-input').placeholder = `${baseline.bmr} cal/day (baseline)`;
+    }
+  } else {
+    console.log('No baseline stats found - user should set them in Settings');
+  }
+  
   // Add date change listener to update workout display
   document.getElementById('date-input').addEventListener('change', (e) => {
     displayWorkouts(e.target.value);
