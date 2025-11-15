@@ -10,6 +10,17 @@
   <link rel="stylesheet" href="style.css?v=4">
   <!-- Chart.js for graphs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Force reload if cached version detected
+    const CURRENT_VERSION = '4';
+    const lastVersion = sessionStorage.getItem('profileVersion');
+    if (!lastVersion || lastVersion !== CURRENT_VERSION) {
+      sessionStorage.setItem('profileVersion', CURRENT_VERSION);
+      if (lastVersion) {
+        window.location.reload(true);
+      }
+    }
+  </script>
 </head>
 <body>
   <div class="app">
