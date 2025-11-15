@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>btb.fit – Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Password gate modal -->
+  <div id="password-modal" class="modal">
+    <div class="login-card">
+      <h2>Admin Access</h2>
+      <p>Enter password to manage your fitness data.</p>
+      <form id="password-form">
+        <input type="password" id="password-input" placeholder="Enter admin password" required>
+        <button type="submit" class="btn">Unlock Admin Panel</button>
+      </form>
+      <p id="error-message" style="color: #ff6b6b; display: none; margin-top: 10px;">Incorrect password</p>
+    </div>
+  </div>
+
+  <!-- Main app (hidden until password is correct) -->
+  <div id="app" class="app hidden">
+    <header>
+      <div class="logo-container">
+        <img src="assets/logo.png" alt="BTB Logo" class="logo-img">
+        <div class="brand">
+          <span class="brand-name">btb<span class="dot">.fit</span></span>
+          <span class="brand-tag">Body Tracking Benchmark</span>
+        </div>
+      </div>
+      <div id="user-bar" class="user-bar">
+        <span id="welcome-message">Admin Mode</span>
+        <button id="settings-btn" class="btn secondary">Settings</button>
+        <button id="view-profile-btn" class="btn secondary">View Public Profile</button>
+        <button id="export-btn" class="btn secondary">Export Data</button>
+        <button id="import-btn" class="btn secondary">Import Data</button>
+        <button id="logout-btn" class="btn secondary">Lock</button>
+        <input type="file" id="import-file" accept=".json" style="display: none;">
+      </div>
+    </header>
+
+    <main>
+      <!-- Full-width entry forms at top -->
+      <section class="entry-section">
+        <div class="card">
+          <div class="card-header">
+            <h2>Log your stats</h2>
+          </div>
+          <form id="entry-form">
+            <div class="field-row">
+              <div class="field">
+                <label for="date-input">Date</label>
+                <input type="date" id="date-input" required>
+              </div>
+              <div class="field">
+                <label for="weight-input">Weight</label>
+                <div class="weight-field">
+                  <input type="number" id="weight-input" min="20" max="500" step="0.1" placeholder="e.g. 75" required>
+                  <select id="unit-select" class="unit-select">
+                    <option value="kg">kg</option>
+                    <option value="lb">lb</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="height-input">Height (optional)</label>
+                <div class="height-field">
+                  <input type="number" id="height-feet" min="3" max="9" step="1" placeholder="ft" class="height-ft">
+                  <input type="number" id="height-inches" min="0" max="11" step="0.1" placeholder="in" class="height-in">
+                </div>
+              </div>
+              <div class="field">
+                <label for="muscle-input">Muscle (%)</label>
+                <input type="number" id="muscle-input" min="5" max="70" step="0.1" placeholder="e.g. 35" required>
+              </div>
+            </div>
+            <div class="form-footer">
+              <button type="submit" class="btn">Add Entry</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Hydration</h2>
+          </div>
+          <form id="hydration-form">
+            <div class="field-row">
+              <div class="field">
+                <label for="water-input">Water Intake (oz)</label>
+                <input type="number" id="water-input" min="0" max="300" step="1" placeholder="e.g. 64">
+              </div>
+            </div>
+            <div class="form-footer">
+              <button type="submit" class="btn">Add Hydration</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Workouts</h2>
+          </div>
+          <form id="workout-form">
+            <div class="field-row">
+              <div class="field">
+                <label for="workout-type">Exercise Type</label>
+                <select id="workout-type" required>
+                  <option value="">Select exercise...</option>
+                  <optgroup label="Cardio">
+                    <option value="running">Running</option>
+                    <option value="cycling">Cycling</option>
+                    <option value="swimming">Swimming</option>
+                    <option value="walking">Walking</option>
+                    <option value="rowing">Rowing</option>
+                    <option value="elliptical">Elliptical</option>
+                    <option value="stairmaster">Stairmaster</option>
+                  </optgroup>
+                  <optgroup label="Strength Training">
+                    <option value="weightlifting">Weightlifting</option>
+                    <option value="bodyweight">Bodyweight Exercises</option>
+                    <option value="crossfit">CrossFit</option>
+                    <option value="powerlifting">Powerlifting</option>
+                  </optgroup>
+                  <optgroup label="Sports & Activities">
+                    <option value="basketball">Basketball</option>
+                    <option value="soccer">Soccer</option>
+                    <option value="tennis">Tennis</option>
+                    <option value="boxing">Boxing</option>
+                    <option value="mma">MMA/Martial Arts</option>
+                    <option value="yoga">Yoga</option>
+                    <option value="pilates">Pilates</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="workout-duration">Duration (minutes)</label>
+                <input type="number" id="workout-duration" min="1" max="480" placeholder="e.g. 45" required>
+              </div>
+              <div class="field">
+                <label for="workout-intensity">Intensity</label>
+                <select id="workout-intensity" required>
+                  <option value="light">Light</option>
+                  <option value="moderate" selected>Moderate</option>
+                  <option value="vigorous">Vigorous</option>
+                  <option value="intense">Very Intense</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-footer">
+              <button type="submit" class="btn">Add Workout</button>
+            </div>
+          </form>
+          <div id="workout-list" style="margin-top: 16px;"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Nutrition</h2>
+          </div>
+          <form id="nutrition-form">
+            <div class="field-row">
+              <div class="field">
+                <label for="protein-input">Protein (g)</label>
+                <input type="number" id="protein-input" min="0" max="500" step="1" placeholder="e.g. 150">
+              </div>
+              <div class="field">
+                <label for="carbs-input">Carbs (g)</label>
+                <input type="number" id="carbs-input" min="0" max="1000" step="1" placeholder="e.g. 200">
+              </div>
+              <div class="field">
+                <label for="fats-input">Fats (g)</label>
+                <input type="number" id="fats-input" min="0" max="300" step="1" placeholder="e.g. 60">
+              </div>
+            </div>
+            <div class="form-footer">
+              <button type="submit" class="btn">Add Nutrition</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Two-column grid for charts -->
+      <section class="charts-grid">
+        <div class="left-col">
+        <div class="card silhouette-card">
+          <div class="card-header">
+            <h2>Current Stats</h2>
+            <label class="privacy-toggle">
+              <input type="checkbox" id="privacy-silhouette" checked>
+              <span class="toggle-label">Public</span>
+            </label>
+          </div>
+          <div class="silhouette-wrapper">
+            <img id="silhouette-img" class="silhouette-img" src="assets/male_silhouette_black.png" alt="Silhouette">
+            <div class="silhouette-info">
+              <p><strong>BMI:</strong> <span id="bmi-value">–</span></p>
+              <p><strong>Status:</strong> <span id="status-value">–</span></p>
+              <p><strong>Hydration:</strong> <span id="hydration-status">–</span></p>
+              <p><strong>Nutrition:</strong> <span id="nutrition-status">–</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>BMI Over Time</h2>
+            <label class="privacy-toggle">
+              <input type="checkbox" id="privacy-bmi" checked>
+              <span class="toggle-label">Public</span>
+            </label>
+          </div>
+          <canvas id="bmi-chart" width="400" height="300"></canvas>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Water Intake</h2>
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <label class="chart-toggle">
+                <input type="radio" name="water-view" value="trend" checked>
+                <span>Trend</span>
+              </label>
+              <label class="chart-toggle">
+                <input type="radio" name="water-view" value="daily">
+                <span>Daily Total</span>
+              </label>
+              <label class="privacy-toggle">
+                <input type="checkbox" id="privacy-water" checked>
+                <span class="toggle-label">Public</span>
+              </label>
+            </div>
+          </div>
+          <canvas id="water-chart" width="400" height="300"></canvas>
+        </div>
+      </div>
+
+      <!-- Right column: charts -->
+      <div class="right-col">
+        <div class="card">
+          <div class="card-header">
+            <h2>Progress over time</h2>
+            <label class="privacy-toggle">
+              <input type="checkbox" id="privacy-progress" checked>
+              <span class="toggle-label">Public</span>
+            </label>
+          </div>
+          <canvas id="progress-chart" width="400" height="300"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h2>Athleticism Score</h2>
+            <label class="privacy-toggle">
+              <input type="checkbox" id="privacy-athleticism" checked>
+              <span class="toggle-label">Public</span>
+            </label>
+          </div>
+          <canvas id="athletic-chart" width="400" height="300"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h2>Daily Macros</h2>
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <label class="chart-toggle">
+                <input type="radio" name="macros-view" value="pie" checked>
+                <span>Pie</span>
+              </label>
+              <label class="chart-toggle">
+                <input type="radio" name="macros-view" value="bar">
+                <span>Bar</span>
+              </label>
+              <label class="chart-toggle">
+                <input type="radio" name="macros-view" value="line">
+                <span>Line</span>
+              </label>
+              <label class="privacy-toggle">
+                <input type="checkbox" id="privacy-macros" checked>
+                <span class="toggle-label">Public</span>
+              </label>
+            </div>
+          </div>
+          <canvas id="macros-chart" width="400" height="300"></canvas>
+        </div>
+      </div>
+
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="card-header">
+          <h2>Weight Projections</h2>
+          <label class="privacy-toggle">
+            <input type="checkbox" id="privacy-projections" checked>
+            <span class="toggle-label">Public</span>
+          </label>
+        </div>
+        <p style="font-size: 13px; color: #9aa8c7; margin-bottom: 16px;">
+          Based on your weight loss pattern, nutrition, and hydration trends
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;" id="projections-container">
+          <div class="projection-card">
+            <div class="projection-period">7 Days</div>
+            <div class="projection-weight" id="proj-7">—</div>
+            <div class="projection-change" id="proj-change-7">—</div>
+          </div>
+          <div class="projection-card">
+            <div class="projection-period">15 Days</div>
+            <div class="projection-weight" id="proj-15">—</div>
+            <div class="projection-change" id="proj-change-15">—</div>
+          </div>
+          <div class="projection-card">
+            <div class="projection-period">30 Days</div>
+            <div class="projection-weight" id="proj-30">—</div>
+            <div class="projection-change" id="proj-change-30">—</div>
+          </div>
+          <div class="projection-card">
+            <div class="projection-period">180 Days</div>
+            <div class="projection-weight" id="proj-180">—</div>
+            <div class="projection-change" id="proj-change-180">—</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    </main>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

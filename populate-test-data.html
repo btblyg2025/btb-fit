@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Populate Test Data</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 { color: #333; margin-top: 0; }
+    select, button {
+      padding: 12px 20px;
+      font-size: 16px;
+      margin: 10px 5px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover { background: #0056b3; }
+    button.clear { background: #dc3545; }
+    button.clear:hover { background: #c82333; }
+    .log {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .success { color: #28a745; }
+    .error { color: #dc3545; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🧪 BTB Fit - Test Data Generator</h1>
+    <p>Select a test scenario and populate 30 days of data (10/16/25 - 11/15/25)</p>
+    
+    <select id="scenario">
+      <optgroup label="🎯 Original Test Scenarios">
+        <option value="1">Test 1: Light person gaining weight (130→145 lb)</option>
+        <option value="2">Test 2: Heavy person losing weight (250→220 lb)</option>
+        <option value="3">Test 3: Struggling to lose (plateau 188-192 lb)</option>
+        <option value="4">Test 4: Athlete building muscle (170 lb stable, muscle up)</option>
+        <option value="5">Test 5: Extreme weight loss (320→200 lb)</option>
+        <option value="6">Test 6: Yo-yo dieter (cycling 175-190 lb)</option>
+        <option value="7">Test 7: Dehydrated person (20-35 oz water)</option>
+        <option value="8">Test 8: Endurance athlete (100-150 oz water)</option>
+        <option value="9">Test 9: Undereating (800-1200 cal)</option>
+        <option value="10">Test 10: Bodybuilder (3500-4500 cal)</option>
+      </optgroup>
+      <optgroup label="👶 Age 13-19: Teens">
+        <option value="11">Teen 1: Growing teen, gaining height & weight (age 14)</option>
+        <option value="12">Teen 2: Overweight teen losing slowly (age 15)</option>
+        <option value="13">Teen 3: Underweight teen gaining muscle (age 16)</option>
+        <option value="14">Teen 4: Athletic teen swimmer (age 17)</option>
+        <option value="15">Teen 5: Teen wrestler cutting weight (age 18)</option>
+      </optgroup>
+      <optgroup label="🎓 Age 20-29: Young Adults">
+        <option value="16">Young 1: College binge eater gaining (age 20)</option>
+        <option value="17">Young 2: Post-grad fitness journey (age 22)</option>
+        <option value="18">Young 3: Young professional stress eating (age 24)</option>
+        <option value="19">Young 4: Personal trainer lean bulk (age 25)</option>
+        <option value="20">Young 5: Vegan gaining weight (age 26)</option>
+        <option value="21">Young 6: Keto dieter rapid loss (age 27)</option>
+        <option value="22">Young 7: Marathon runner maintaining (age 28)</option>
+        <option value="23">Young 8: CrossFit beginner gaining muscle (age 29)</option>
+        <option value="24">Young 9: Party lifestyle weight gain (age 23)</option>
+        <option value="25">Young 10: Intermittent faster (age 25)</option>
+      </optgroup>
+      <optgroup label="💼 Age 30-39: Career Adults">
+        <option value="26">Adult 1: New parent sleep-deprived (age 30)</option>
+        <option value="27">Adult 2: Desk job weight creep (age 32)</option>
+        <option value="28">Adult 3: Divorced rebuilding confidence (age 34)</option>
+        <option value="29">Adult 4: Working mom losing baby weight (age 31)</option>
+        <option value="30">Adult 5: Entrepreneur stress fluctuation (age 36)</option>
+        <option value="31">Adult 6: Night shift worker (age 33)</option>
+        <option value="32">Adult 7: Weekend warrior athlete (age 35)</option>
+        <option value="33">Adult 8: Powerlifter bulking (age 37)</option>
+        <option value="34">Adult 9: Yoga instructor maintaining (age 38)</option>
+        <option value="35">Adult 10: Restaurant owner gaining (age 39)</option>
+      </optgroup>
+      <optgroup label="🏃 Age 40-49: Midlife">
+        <option value="36">Midlife 1: Prediabetic reversing course (age 42)</option>
+        <option value="37">Midlife 2: Empty nester finding time (age 45)</option>
+        <option value="38">Midlife 3: Menopause weight gain (age 48)</option>
+        <option value="39">Midlife 4: Triathlete aging gracefully (age 44)</option>
+        <option value="40">Midlife 5: Executive stress eating (age 46)</option>
+        <option value="41">Midlife 6: Craft beer enthusiast gaining (age 43)</option>
+        <option value="42">Midlife 7: Injury recovery plateau (age 47)</option>
+        <option value="43">Midlife 8: Mediterranean diet success (age 41)</option>
+        <option value="44">Midlife 9: Testosterone therapy gains (age 49)</option>
+        <option value="45">Midlife 10: Cyclist maintaining (age 44)</option>
+      </optgroup>
+      <optgroup label="🧓 Age 50-59: Pre-Retirement">
+        <option value="46">Senior 1: Type 2 diabetic managing (age 52)</option>
+        <option value="47">Senior 2: Retired military staying fit (age 54)</option>
+        <option value="48">Senior 3: Grandparent getting active (age 56)</option>
+        <option value="49">Senior 4: Hypertension diet change (age 58)</option>
+        <option value="50">Senior 5: Golf enthusiast light activity (age 55)</option>
+        <option value="51">Senior 6: Cancer survivor rebuilding (age 53)</option>
+        <option value="52">Senior 7: Arthritis limiting movement (age 57)</option>
+        <option value="53">Senior 8: Heart disease reversal diet (age 59)</option>
+        <option value="54">Senior 9: Master's athlete competing (age 51)</option>
+        <option value="55">Senior 10: Downsizing stress gain (age 54)</option>
+      </optgroup>
+      <optgroup label="👴 Age 60+: Retirement & Beyond">
+        <option value="56">Elder 1: Retired gaining from inactivity (age 62)</option>
+        <option value="57">Elder 2: Active senior losing slowly (age 65)</option>
+        <option value="58">Elder 3: Walking club member (age 68)</option>
+        <option value="59">Elder 4: Medication affecting weight (age 71)</option>
+        <option value="60">Elder 5: Widower forgetting meals (age 74)</option>
+      </optgroup>
+      <optgroup label="🏋️ Athletic Profiles">
+        <option value="61">Athlete 1: Powerlifter strength focus (age 29)</option>
+        <option value="62">Athlete 2: Olympic weightlifter (age 26)</option>
+        <option value="63">Athlete 3: Rock climber lean gains (age 31)</option>
+        <option value="64">Athlete 4: MMA fighter weight cut (age 28)</option>
+        <option value="65">Athlete 5: Gymnast maintaining low BF (age 22)</option>
+        <option value="66">Athlete 6: Rugby player bulking (age 27)</option>
+        <option value="67">Athlete 7: Sprinter explosive muscle (age 24)</option>
+        <option value="68">Athlete 8: Swimmer high volume training (age 21)</option>
+        <option value="69">Athlete 9: Cyclist endurance focused (age 33)</option>
+        <option value="70">Athlete 10: Basketball player agile (age 25)</option>
+      </optgroup>
+      <optgroup label="🩺 Medical Conditions">
+        <option value="71">Medical 1: Hypothyroid slow metabolism (age 36)</option>
+        <option value="72">Medical 2: PCOS hormonal imbalance (age 29)</option>
+        <option value="73">Medical 3: Post-surgery recovery (age 44)</option>
+        <option value="74">Medical 4: Chronic fatigue syndrome (age 38)</option>
+        <option value="75">Medical 5: Celiac disease managing (age 32)</option>
+        <option value="76">Medical 6: Depression medication weight (age 27)</option>
+        <option value="77">Medical 7: Sleep apnea losing to improve (age 51)</option>
+        <option value="78">Medical 8: Lupus inflammation (age 34)</option>
+        <option value="79">Medical 9: IBS dietary restrictions (age 41)</option>
+        <option value="80">Medical 10: Fibromyalgia limited activity (age 47)</option>
+      </optgroup>
+      <optgroup label="🍽️ Diet Extremes">
+        <option value="81">Diet 1: Carnivore diet experiment (age 30)</option>
+        <option value="82">Diet 2: Raw vegan transition (age 28)</option>
+        <option value="83">Diet 3: OMAD one meal a day (age 35)</option>
+        <option value="84">Diet 4: Paleo clean eating (age 33)</option>
+        <option value="85">Diet 5: Low-carb high-fat (age 40)</option>
+        <option value="86">Diet 6: High-carb low-fat vegan (age 26)</option>
+        <option value="87">Diet 7: Juice cleanse detox (age 31)</option>
+        <option value="88">Diet 8: Whole30 elimination (age 37)</option>
+        <option value="89">Diet 9: Flexible dieting IIFYM (age 29)</option>
+        <option value="90">Diet 10: Intuitive eating recovery (age 25)</option>
+      </optgroup>
+      <optgroup label="🎭 Lifestyle Scenarios">
+        <option value="91">Life 1: Shift worker irregular schedule (age 34)</option>
+        <option value="92">Life 2: Travel nurse inconsistent (age 29)</option>
+        <option value="93">Life 3: Truck driver sedentary (age 45)</option>
+        <option value="94">Life 4: Chef tasting food daily (age 32)</option>
+        <option value="95">Life 5: Bartender late nights (age 27)</option>
+        <option value="96">Life 6: Construction worker active (age 38)</option>
+        <option value="97">Life 7: Teacher stressed eating (age 41)</option>
+        <option value="98">Life 8: Software engineer sedentary (age 30)</option>
+        <option value="99">Life 9: Farmer physical labor (age 48)</option>
+        <option value="100">Life 10: Firefighter maintaining strength (age 35)</option>
+      </optgroup>
+    </select>
+    
+    <br>
+    <button onclick="populateData()">Generate & Load Test Data</button>
+    <button class="clear" onclick="clearData()">Clear All Data</button>
+    
+    <div class="log" id="log"></div>
+  </div>
+
+  <script>
+    const PUBLIC_USER = 'btbga';
+    
+    function log(message, type = 'info') {
+      const logEl = document.getElementById('log');
+      const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
+      logEl.innerHTML += `<div class="${className}">${message}</div>`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    
+    function clearData() {
+      if (!confirm('Clear all data for user btbga?')) return;
+      localStorage.removeItem(`btb_entries_${PUBLIC_USER}`);
+      localStorage.removeItem(`btb_baseline_${PUBLIC_USER}`);
+      localStorage.removeItem(`btb_profile_${PUBLIC_USER}`);
+      localStorage.removeItem(`btb_privacy_${PUBLIC_USER}`);
+      document.getElementById('log').innerHTML = '';
+      log('✓ All data cleared!', 'success');
+    }
+    
+    function getScenarioParams(scenario) {
+      const s = parseInt(scenario);
+      const params = {
+        // Teens 11-15
+        11: {startWeight: 65, weightChange: 8, height: 170, startMuscle: 16, muscleChange: 3, protein: 90, carbs: 220, fats: 60, water: 55, weightVariance: 0.02, macroVariance: 0.15, waterVariance: 0.15},
+        12: {startWeight: 82, weightChange: -5, height: 165, startMuscle: 18, muscleChange: 2, protein: 95, carbs: 150, fats: 55, water: 60, weightVariance: 0.02, macroVariance: 0.15, waterVariance: 0.15},
+        13: {startWeight: 56, weightChange: 4, height: 175, startMuscle: 14, muscleChange: 4, protein: 110, carbs: 200, fats: 60, water: 70, weightVariance: 0.01, macroVariance: 0.1, waterVariance: 0.1},
+        14: {startWeight: 68, weightChange: -1, height: 180, startMuscle: 24, muscleChange: 2, protein: 130, carbs: 250, fats: 55, water: 110, weightVariance: 0.01, macroVariance: 0.1, waterVariance: 0.1},
+        15: {startWeight: 74, weightChange: -6, height: 173, startMuscle: 22, muscleChange: -1, protein: 100, carbs: 130, fats: 45, water: 50, weightVariance: 0.03, macroVariance: 0.2, waterVariance: 0.2},
+        // Young Adults 16-25
+        16: {startWeight: 70, weightChange: 9, height: 178, startMuscle: 19, muscleChange: -2, protein: 85, carbs: 270, fats: 75, water: 45, weightVariance: 0.02, macroVariance: 0.25, waterVariance: 0.2},
+        17: {startWeight: 95, weightChange: -12, height: 168, startMuscle: 17, muscleChange: 4, protein: 125, carbs: 135, fats: 48, water: 75, weightVariance: 0.015, macroVariance: 0.12, waterVariance: 0.12},
+        18: {startWeight: 78, weightChange: 7, height: 175, startMuscle: 20, muscleChange: -1, protein: 95, carbs: 200, fats: 68, water: 50, weightVariance: 0.02, macroVariance: 0.2, waterVariance: 0.2},
+        19: {startWeight: 82, weightChange: 6, height: 183, startMuscle: 26, muscleChange: 3, protein: 180, carbs: 320, fats: 85, water: 100, weightVariance: 0.01, macroVariance: 0.12, waterVariance: 0.1},
+        20: {startWeight: 64, weightChange: 5, height: 165, startMuscle: 18, muscleChange: 1, protein: 75, carbs: 250, fats: 60, water: 55, weightVariance: 0.02, macroVariance: 0.18, waterVariance: 0.15},
+        21: {startWeight: 88, weightChange: -10, height: 170, startMuscle: 21, muscleChange: 2, protein: 140, carbs: 75, fats: 90, water: 85, weightVariance: 0.02, macroVariance: 0.15, waterVariance: 0.12},
+        22: {startWeight: 61, weightChange: -0.5, height: 172, startMuscle: 24, muscleChange: 1, protein: 110, carbs: 240, fats: 50, water: 95, weightVariance: 0.01, macroVariance: 0.1, waterVariance: 0.1},
+        23: {startWeight: 72, weightChange: 5, height: 178, startMuscle: 21, muscleChange: 4, protein: 125, carbs: 200, fats: 65, water: 75, weightVariance: 0.015, macroVariance: 0.12, waterVariance: 0.12},
+        24: {startWeight: 66, weightChange: 8, height: 163, startMuscle: 17, muscleChange: -2, protein: 70, carbs: 230, fats: 80, water: 40, weightVariance: 0.025, macroVariance: 0.3, waterVariance: 0.25},
+        25: {startWeight: 75, weightChange: -4, height: 175, startMuscle: 22, muscleChange: 1, protein: 125, carbs: 160, fats: 60, water: 70, weightVariance: 0.015, macroVariance: 0.15, waterVariance: 0.15},
+        // Career Adults 26-35
+        26: {startWeight: 79, weightChange: 6, height: 180, startMuscle: 21, muscleChange: -2, protein: 90, carbs: 210, fats: 70, water: 45, weightVariance: 0.02, macroVariance: 0.25, waterVariance: 0.25},
+        27: {startWeight: 85, weightChange: 8, height: 175, startMuscle: 19, muscleChange: -1, protein: 95, carbs: 220, fats: 72, water: 50, weightVariance: 0.02, macroVariance: 0.2, waterVariance: 0.2},
+        28: {startWeight: 92, weightChange: -8, height: 163, startMuscle: 16, muscleChange: 3, protein: 115, carbs: 140, fats: 52, water: 68, weightVariance: 0.015, macroVariance: 0.12, waterVariance: 0.12},
+        29: {startWeight: 73, weightChange: -7, height: 160, startMuscle: 18, muscleChange: 2, protein: 100, carbs: 130, fats: 50, water: 65, weightVariance: 0.015, macroVariance: 0.15, waterVariance: 0.15},
+        30: {startWeight: 88, weightChange: 0, height: 178, startMuscle: 20, muscleChange: 0, protein: 105, carbs: 190, fats: 68, water: 58, weightVariance: 0.03, macroVariance: 0.3, waterVariance: 0.25},
+        31: {startWeight: 81, weightChange: 5, height: 168, startMuscle: 18, muscleChange: -1, protein: 88, carbs: 195, fats: 72, water: 42, weightVariance: 0.025, macroVariance: 0.28, waterVariance: 0.3},
+        32: {startWeight: 78, weightChange: 3, height: 175, startMuscle: 22, muscleChange: 2, protein: 120, carbs: 180, fats: 62, water: 75, weightVariance: 0.015, macroVariance: 0.15, waterVariance: 0.12},
+        33: {startWeight: 95, weightChange: 8, height: 180, startMuscle: 28, muscleChange: 3, protein: 200, carbs: 350, fats: 95, water: 105, weightVariance: 0.015, macroVariance: 0.12, waterVariance: 0.1},
+        34: {startWeight: 58, weightChange: -0.5, height: 165, startMuscle: 26, muscleChange: 1, protein: 95, carbs: 140, fats: 48, water: 80, weightVariance: 0.01, macroVariance: 0.08, waterVariance: 0.08},
+        35: {startWeight: 92, weightChange: 7, height: 173, startMuscle: 17, muscleChange: -2, protein: 98, carbs: 240, fats: 85, water: 52, weightVariance: 0.02, macroVariance: 0.22, waterVariance: 0.2},
+        // Midlife 36-45
+        36: {startWeight: 102, weightChange: -10, height: 175, startMuscle: 19, muscleChange: 3, protein: 130, carbs: 125, fats: 50, water: 72, weightVariance: 0.015, macroVariance: 0.12, waterVariance: 0.12},
+        37: {startWeight: 87, weightChange: -6, height: 168, startMuscle: 20, muscleChange: 2, protein: 110, carbs: 145, fats: 55, water: 70, weightVariance: 0.015, macroVariance: 0.15, waterVariance: 0.15},
+        38: {startWeight: 72, weightChange: 9, height: 163, startMuscle: 21, muscleChange: -2, protein: 85, carbs: 180, fats: 65, water: 50, weightVariance: 0.02, macroVariance: 0.2, waterVariance: 0.2},
+        39: {startWeight: 68, weightChange: -1, height: 175, startMuscle: 25, muscleChange: 0, protein: 125, carbs: 220, fats: 60, water: 95, weightVariance: 0.01, macroVariance: 0.1, waterVariance: 0.1},
+        40: {startWeight: 95, weightChange: 6, height: 180, startMuscle: 18, muscleChange: -1, protein: 100, carbs: 215, fats: 78, water: 55, weightVariance: 0.02, macroVariance: 0.2, waterVariance: 0.2},
+        41: {startWeight: 89, weightChange: 8, height: 178, startMuscle: 19, muscleChange: -2, protein: 92, carbs: 250, fats: 82, water: 60, weightVariance: 0.02, macroVariance: 0.22, waterVariance: 0.2},
+        42: {startWeight: 91, weightChange: 0, height: 173, startMuscle: 20, muscleChange: 0, protein: 105, carbs: 165, fats: 62, water: 58, weightVariance: 0.015, macroVariance: 0.18, waterVariance: 0.18},
+        43: {startWeight: 98, weightChange: -11, height: 175, startMuscle: 18, muscleChange: 4, protein: 135, carbs: 140, fats: 62, water: 78, weightVariance: 0.015, macroVariance: 0.12, waterVariance: 0.1},
+        44: {startWeight: 86, weightChange: 4, height: 180, startMuscle: 22, muscleChange: 2, protein: 145, carbs: 200, fats: 70, water: 88, weightVariance: 0.015, macroVariance: 0.12, waterVariance: 0.1},
+        45: {startWeight: 74, weightChange: -0.5, height: 175, startMuscle: 24, muscleChange: 1, protein: 115, carbs: 180, fats: 58, water: 85, weightVariance: 0.01, macroVariance: 0.1, waterVariance: 0.1},
+        // Pre-Retirement 46-55
+        46: {startWeight: 105, weightChange: -9, height: 173, startMuscle: 17, muscleChange: 3, protein: 125, carbs: 110, fats: 48, water: 70, weightVariance: 0.015, macroVariance: 0.12, waterVariance: 0.12},
+        47: {startWeight: 82, weightChange: -2, height: 178, startMuscle: 24, muscleChange: 1, protein: 140, carbs: 165, fats: 60, water: 85, weightVariance: 0.01, macroVariance: 0.1, waterVariance: 0.1},
+        48: {startWeight: 79, weightChange: -3, height: 160, startMuscle: 19, muscleChange: 2, protein: 95, carbs: 135, fats: 52, water: 65, weightVariance: 0.015, macroVariance: 0.15, waterVariance: 0.15},
+        49: {startWeight: 98, weightChange: -7, height: 170, startMuscle: 18, muscleChange: 2, protein: 115, carbs: 120, fats: 50, water: 72, weightVariance: 0.015, macroVariance: 0.12, waterVariance: 0.12},
+        50: {startWeight: 88, weightChange: 1, height: 175, startMuscle: 19, muscleChange: 0, protein: 95, carbs: 175, fats: 65, water: 62, weightVariance: 0.015, macroVariance: 0.18, waterVariance: 0.15},
+        51: {startWeight: 71, weightChange: 5, height: 165, startMuscle: 16, muscleChange: 3, protein: 100, carbs: 155, fats: 55, water: 68, weightVariance: 0.02, macroVariance: 0.15, waterVariance: 0.15},
+        52: {startWeight: 84, weightChange: 2, height: 168, startMuscle: 17, muscleChange: -0.5, protein: 85, carbs: 160, fats: 60, water: 55, weightVariance: 0.02, macroVariance: 0.2, waterVariance: 0.2},
+        53: {startWeight: 103, weightChange: -10, height: 175, startMuscle: 16, muscleChange: 3, protein: 130, carbs: 105, fats: 45, water: 75, weightVariance: 0.015, macroVariance: 0.12, waterVariance: 0.12},
+        54: {startWeight: 76, weightChange: -1, height: 180, startMuscle: 26, muscleChange: 1, protein: 135, carbs: 170, fats: 60, water: 90, weightVariance: 0.01, macroVariance: 0.1, waterVariance: 0.1},
+        55: {startWeight: 86, weightChange: 5, height: 170, startMuscle: 18, muscleChange: -1, protein: 92, carbs: 200, fats: 70, water: 50, weightVariance: 0.02, macroVariance: 0.22, waterVariance: 0.2},
+        // Retirement 56-60
+        56: {startWeight: 87, weightChange: 7, height: 175, startMuscle: 17, muscleChange: -2, protein: 82, carbs: 190, fats: 68, water: 48, weightVariance: 0.02, macroVariance: 0.2, waterVariance: 0.2},
+        57: {startWeight: 92, weightChange: -5, height: 168, startMuscle: 18, muscleChange: 1, protein: 100, carbs: 145, fats: 52, water: 65, weightVariance: 0.015, macroVariance: 0.15, waterVariance: 0.15},
+        58: {startWeight: 78, weightChange: -2, height: 163, startMuscle: 19, muscleChange: 1, protein: 90, carbs: 150, fats: 55, water: 70, weightVariance: 0.01, macroVariance: 0.12, waterVariance: 0.12},
+        59: {startWeight: 95, weightChange: 3, height: 173, startMuscle: 17, muscleChange: 0, protein: 88, carbs: 175, fats: 62, water: 52, weightVariance: 0.02, macroVariance: 0.2, waterVariance: 0.2},
+        60: {startWeight: 71, weightChange: -4, height: 170, startMuscle: 16, muscleChange: -1, protein: 75, carbs: 125, fats: 48, water: 50, weightVariance: 0.025, macroVariance: 0.25, waterVariance: 0.25},
+        // Athletes 61-70
+        61: {startWeight: 98, weightChange: 7, height: 178, startMuscle: 30, muscleChange: 3, protein: 210, carbs: 380, fats: 100, water: 110, weightVariance: 0.01, macroVariance: 0.1, waterVariance: 0.08},
+        62: {startWeight: 85, weightChange: 3, height: 170, startMuscle: 28, muscleChange: 2, protein: 180, carbs: 320, fats: 85, water: 100, weightVariance: 0.01, macroVariance: 0.1, waterVariance: 0.08},
+        63: {startWeight: 68, weightChange: 2, height: 175, startMuscle: 25, muscleChange: 3, protein: 140, carbs: 230, fats: 60, water: 85, weightVariance: 0.01, macroVariance: 0.1, waterVariance: 0.1},
+        64: {startWeight: 77, weightChange: -5, height: 175, startMuscle: 24, muscleChange: -1, protein: 150, carbs: 180, fats: 55, water: 60, weightVariance: 0.02, macroVariance: 0.15, waterVariance: 0.15},
+        65: {startWeight: 56, weightChange: 0.5, height: 165, startMuscle: 22, muscleChange: 1, protein: 110, carbs: 190, fats: 45, water: 75, weightVariance: 0.008, macroVariance: 0.08, waterVariance: 0.08},
+        66: {startWeight: 102, weightChange: 9, height: 183, startMuscle: 29, muscleChange: 3, protein: 200, carbs: 420, fats: 105, water: 115, weightVariance: 0.015, macroVariance: 0.12, waterVariance: 0.1},
+        67: {startWeight: 79, weightChange: 4, height: 180, startMuscle: 27, muscleChange: 3, protein: 170, carbs: 300, fats: 75, water: 95, weightVariance: 0.01, macroVariance: 0.1, waterVariance: 0.08},
+        68: {startWeight: 72, weightChange: -1, height: 188, startMuscle: 26, muscleChange: 1, protein: 145, carbs: 310, fats: 65, water: 125, weightVariance: 0.01, macroVariance: 0.1, waterVariance: 0.1},
+        69: {startWeight: 69, weightChange: -2, height: 178, startMuscle: 24, muscleChange: 1, protein: 125, carbs: 290, fats: 58, water: 105, weightVariance: 0.01, macroVariance: 0.1, waterVariance: 0.1},
+        70: {startWeight: 91, weightChange: 2, height: 198, startMuscle: 26, muscleChange: 2, protein: 165, carbs: 330, fats: 80, water: 110, weightVariance: 0.01, macroVariance: 0.12, waterVariance: 0.1},
+        // Medical 71-80
+        71: {startWeight: 84, weightChange: 2, height: 165, startMuscle: 18, muscleChange: -0.5, protein: 90, carbs: 170, fats: 62, water: 55, weightVariance: 0.015, macroVariance: 0.18, waterVariance: 0.18},
+        72: {startWeight: 79, weightChange: 1, height: 163, startMuscle: 19, muscleChange: 0, protein: 95, carbs: 175, fats: 65, water: 58, weightVariance: 0.02, macroVariance: 0.2, waterVariance: 0.2},
+        73: {startWeight: 88, weightChange: 4, height: 173, startMuscle: 20, muscleChange: -2, protein: 85, carbs: 160, fats: 58, water: 52, weightVariance: 0.02, macroVariance: 0.2, waterVariance: 0.2},
+        74: {startWeight: 76, weightChange: 0, height: 168, startMuscle: 17, muscleChange: -1, protein: 78, carbs: 155, fats: 60, water: 48, weightVariance: 0.02, macroVariance: 0.25, waterVariance: 0.25},
+        75: {startWeight: 71, weightChange: -2, height: 170, startMuscle: 20, muscleChange: 1, protein: 105, carbs: 135, fats: 52, water: 68, weightVariance: 0.015, macroVariance: 0.15, waterVariance: 0.15},
+        76: {startWeight: 73, weightChange: 6, height: 175, startMuscle: 19, muscleChange: -2, protein: 82, carbs: 185, fats: 68, water: 50, weightVariance: 0.02, macroVariance: 0.22, waterVariance: 0.2},
+        77: {startWeight: 115, weightChange: -12, height: 178, startMuscle: 16, muscleChange: 3, protein: 135, carbs: 125, fats: 50, water: 80, weightVariance: 0.015, macroVariance: 0.12, waterVariance: 0.12},
+        78: {startWeight: 75, weightChange: 2, height: 165, startMuscle: 18, muscleChange: 0, protein: 88, carbs: 165, fats: 60, water: 60, weightVariance: 0.02, macroVariance: 0.2, waterVariance: 0.2},
+        79: {startWeight: 82, weightChange: -1, height: 173, startMuscle: 19, muscleChange: 0, protein: 95, carbs: 145, fats: 58, water: 65, weightVariance: 0.015, macroVariance: 0.18, waterVariance: 0.18},
+        80: {startWeight: 86, weightChange: 1, height: 168, startMuscle: 17, muscleChange: -0.5, protein: 80, carbs: 160, fats: 62, water: 52, weightVariance: 0.02, macroVariance: 0.22, waterVariance: 0.22},
+        // Diet Extremes 81-90
+        81: {startWeight: 88, weightChange: -5, height: 180, startMuscle: 24, muscleChange: 2, protein: 190, carbs: 15, fats: 110, water: 90, weightVariance: 0.015, macroVariance: 0.15, waterVariance: 0.12},
+        82: {startWeight: 64, weightChange: -3, height: 168, startMuscle: 19, muscleChange: -1, protein: 55, carbs: 210, fats: 45, water: 95, weightVariance: 0.02, macroVariance: 0.2, waterVariance: 0.15},
+        83: {startWeight: 81, weightChange: -6, height: 175, startMuscle: 21, muscleChange: 1, protein: 120, carbs: 140, fats: 60, water: 75, weightVariance: 0.015, macroVariance: 0.18, waterVariance: 0.15},
+        84: {startWeight: 78, weightChange: -4, height: 173, startMuscle: 22, muscleChange: 2, protein: 130, carbs: 145, fats: 65, water: 80, weightVariance: 0.015, macroVariance: 0.12, waterVariance: 0.12},
+        85: {startWeight: 92, weightChange: -8, height: 178, startMuscle: 23, muscleChange: 2, protein: 145, carbs: 80, fats: 95, water: 85, weightVariance: 0.015, macroVariance: 0.15, waterVariance: 0.12},
+        86: {startWeight: 69, weightChange: -2, height: 170, startMuscle: 20, muscleChange: 0, protein: 70, carbs: 280, fats: 35, water: 85, weightVariance: 0.015, macroVariance: 0.15, waterVariance: 0.12},
+        87: {startWeight: 74, weightChange: -7, height: 165, startMuscle: 18, muscleChange: -2, protein: 45, carbs: 160, fats: 20, water: 110, weightVariance: 0.025, macroVariance: 0.3, waterVariance: 0.2},
+        88: {startWeight: 83, weightChange: -5, height: 168, startMuscle: 21, muscleChange: 1, protein: 115, carbs: 125, fats: 58, water: 75, weightVariance: 0.015, macroVariance: 0.15, waterVariance: 0.15},
+        89: {startWeight: 76, weightChange: -3, height: 175, startMuscle: 23, muscleChange: 2, protein: 135, carbs: 185, fats: 62, water: 80, weightVariance: 0.01, macroVariance: 0.12, waterVariance: 0.12},
+        90: {startWeight: 68, weightChange: 2, height: 163, startMuscle: 20, muscleChange: 1, protein: 95, carbs: 175, fats: 60, water: 70, weightVariance: 0.015, macroVariance: 0.18, waterVariance: 0.15},
+        // Lifestyle 91-100
+        91: {startWeight: 82, weightChange: 4, height: 175, startMuscle: 19, muscleChange: -1, protein: 90, carbs: 195, fats: 70, water: 45, weightVariance: 0.025, macroVariance: 0.3, waterVariance: 0.3},
+        92: {startWeight: 71, weightChange: 3, height: 165, startMuscle: 20, muscleChange: -0.5, protein: 88, carbs: 180, fats: 65, water: 50, weightVariance: 0.025, macroVariance: 0.28, waterVariance: 0.28},
+        93: {startWeight: 105, weightChange: 8, height: 180, startMuscle: 16, muscleChange: -2, protein: 95, carbs: 230, fats: 85, water: 48, weightVariance: 0.02, macroVariance: 0.22, waterVariance: 0.22},
+        94: {startWeight: 86, weightChange: 7, height: 173, startMuscle: 18, muscleChange: -1, protein: 100, carbs: 240, fats: 88, water: 55, weightVariance: 0.02, macroVariance: 0.25, waterVariance: 0.2},
+        95: {startWeight: 75, weightChange: 5, height: 178, startMuscle: 19, muscleChange: -1, protein: 85, carbs: 215, fats: 75, water: 42, weightVariance: 0.02, macroVariance: 0.28, waterVariance: 0.3},
+        96: {startWeight: 91, weightChange: -3, height: 180, startMuscle: 25, muscleChange: 2, protein: 140, carbs: 250, fats: 70, water: 90, weightVariance: 0.015, macroVariance: 0.15, waterVariance: 0.12},
+        97: {startWeight: 79, weightChange: 6, height: 165, startMuscle: 18, muscleChange: -1, protein: 88, carbs: 205, fats: 72, water: 48, weightVariance: 0.02, macroVariance: 0.25, waterVariance: 0.25},
+        98: {startWeight: 84, weightChange: 7, height: 178, startMuscle: 18, muscleChange: -2, protein: 82, carbs: 220, fats: 75, water: 45, weightVariance: 0.02, macroVariance: 0.22, waterVariance: 0.22},
+        99: {startWeight: 95, weightChange: -4, height: 183, startMuscle: 24, muscleChange: 1, protein: 135, carbs: 240, fats: 72, water: 95, weightVariance: 0.015, macroVariance: 0.15, waterVariance: 0.12},
+        100: {startWeight: 89, weightChange: 1, height: 180, startMuscle: 27, muscleChange: 1, protein: 160, carbs: 210, fats: 68, water: 100, weightVariance: 0.01, macroVariance: 0.12, waterVariance: 0.1}
+      };
+      return params[s] || null;
+    }
+    
+    function generateEntries(scenario) {
+      const entries = [];
+      const startDate = new Date('2025-10-16');
+      
+      // Helper to add days
+      function addDays(date, days) {
+        const result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+      }
+      
+      // Helper for random variance
+      function variance(base, percent) {
+        return base + (Math.random() - 0.5) * 2 * base * percent;
+      }
+      
+      // Helper to generate workouts based on scenario
+      function generateWorkouts(scenario, day, weightKg) {
+        const s = parseInt(scenario);
+        const workouts = [];
+        
+        // Workout probability and types based on scenario
+        const workoutPatterns = {
+          // Athletes (61-70) - high frequency, varied workouts
+          athlete: {
+            types: ['weightlifting', 'crossfit', 'running', 'swimming', 'bodyweight'],
+            frequency: 0.85, // 85% chance daily
+            avgDuration: 90,
+            intensity: 'vigorous'
+          },
+          // Young athletes (14, 22, 23, 39, 44, 45, 47, 54)
+          youngAthlete: {
+            types: ['swimming', 'basketball', 'soccer', 'running', 'cycling'],
+            frequency: 0.7,
+            avgDuration: 75,
+            intensity: 'moderate'
+          },
+          // Strength focused (33, 61, 62, 66)
+          strength: {
+            types: ['weightlifting', 'powerlifting', 'crossfit'],
+            frequency: 0.75,
+            avgDuration: 70,
+            intensity: 'vigorous'
+          },
+          // Cardio focused (8, 22, 68, 69)
+          cardio: {
+            types: ['running', 'cycling', 'swimming', 'rowing'],
+            frequency: 0.8,
+            avgDuration: 60,
+            intensity: 'moderate'
+          },
+          // Combat sports (64)
+          combat: {
+            types: ['mma', 'boxing'],
+            frequency: 0.7,
+            avgDuration: 90,
+            intensity: 'vigorous'
+          },
+          // Light activity (34, 50, 58)
+          light: {
+            types: ['yoga', 'pilates', 'walking'],
+            frequency: 0.5,
+            avgDuration: 45,
+            intensity: 'light'
+          },
+          // Moderate activity (32, 96, 99)
+          moderate: {
+            types: ['walking', 'cycling', 'bodyweight', 'yoga'],
+            frequency: 0.6,
+            avgDuration: 50,
+            intensity: 'moderate'
+          },
+          // Sedentary (93, 98) - rare workouts
+          sedentary: {
+            types: ['walking', 'elliptical'],
+            frequency: 0.2,
+            avgDuration: 30,
+            intensity: 'light'
+          },
+          // None - no workouts
+          none: {
+            types: [],
+            frequency: 0,
+            avgDuration: 0,
+            intensity: 'light'
+          }
+        };
+        
+        // Map scenarios to patterns
+        let pattern = workoutPatterns.none;
+        
+        if ([14, 17, 22, 39, 44, 45, 47, 54].includes(s)) pattern = workoutPatterns.youngAthlete;
+        else if ([61, 62, 63, 64, 65, 66, 67, 68, 69, 70].includes(s)) pattern = workoutPatterns.athlete;
+        else if ([33, 61, 62, 66].includes(s)) pattern = workoutPatterns.strength;
+        else if ([8, 22, 68, 69].includes(s)) pattern = workoutPatterns.cardio;
+        else if ([64].includes(s)) pattern = workoutPatterns.combat;
+        else if ([34, 50, 58].includes(s)) pattern = workoutPatterns.light;
+        else if ([32, 96, 99].includes(s)) pattern = workoutPatterns.moderate;
+        else if ([93, 98].includes(s)) pattern = workoutPatterns.sedentary;
+        else if ([1, 7, 9, 16, 18, 24, 26, 27, 30, 31, 35, 38, 40, 41, 42, 55, 56, 71, 72, 73, 74, 76, 78, 80, 91, 92, 94, 95, 97].includes(s)) {
+          pattern = workoutPatterns.none; // Sedentary/struggling scenarios
+        } else {
+          pattern = workoutPatterns.moderate; // Default moderate activity
+        }
+        
+        // Generate workout if random passes frequency check
+        if (Math.random() < pattern.frequency && pattern.types.length > 0) {
+          const type = pattern.types[Math.floor(Math.random() * pattern.types.length)];
+          const duration = Math.round(pattern.avgDuration + variance(0, 0.2) * pattern.avgDuration);
+          const intensity = pattern.intensity;
+          
+          // Calculate calories using MET values
+          const metValues = {
+            running: { light: 6, moderate: 9.8, vigorous: 11.5, intense: 14 },
+            cycling: { light: 4, moderate: 8, vigorous: 10, intense: 12 },
+            swimming: { light: 6, moderate: 8, vigorous: 10, intense: 11 },
+            walking: { light: 3.5, moderate: 4.5, vigorous: 5.5, intense: 6.5 },
+            rowing: { light: 4.8, moderate: 7, vigorous: 8.5, intense: 12 },
+            elliptical: { light: 4.5, moderate: 7, vigorous: 8, intense: 9.5 },
+            stairmaster: { light: 5, moderate: 8, vigorous: 9, intense: 11 },
+            weightlifting: { light: 3, moderate: 5, vigorous: 6, intense: 8 },
+            bodyweight: { light: 3.5, moderate: 4.5, vigorous: 5.5, intense: 7 },
+            crossfit: { light: 5, moderate: 8, vigorous: 10, intense: 12 },
+            powerlifting: { light: 4, moderate: 6, vigorous: 8, intense: 10 },
+            basketball: { light: 4.5, moderate: 6.5, vigorous: 8, intense: 10 },
+            soccer: { light: 5, moderate: 7, vigorous: 10, intense: 12 },
+            tennis: { light: 5, moderate: 7, vigorous: 8, intense: 9 },
+            boxing: { light: 6, moderate: 9, vigorous: 12, intense: 14 },
+            mma: { light: 6, moderate: 10, vigorous: 13, intense: 15 },
+            yoga: { light: 2.5, moderate: 3, vigorous: 4, intense: 5 },
+            pilates: { light: 3, moderate: 4, vigorous: 5, intense: 6 }
+          };
+          
+          const met = metValues[type]?.[intensity] || 5;
+          const caloriesBurned = Math.round(met * weightKg * (duration / 60));
+          
+          workouts.push({
+            type: type,
+            duration: duration,
+            intensity: intensity,
+            caloriesBurned: caloriesBurned
+          });
+        }
+        
+        return workouts;
+      }
+      
+      // Generate 30 days of data
+      for (let day = 0; day < 30; day++) {
+        const date = addDays(startDate, day);
+        const dateStr = date.toISOString().split('T')[0];
+        const progress = day / 29; // 0 to 1
+        
+        let entry = { date: dateStr };
+        
+        switch(scenario) {
+          case '1': // Light person gaining weight (130→145 lb)
+            entry.weight = 59 + (progress * 6.8) + variance(0, 0.02); // 130→145 lb in kg
+            entry.height = 165; // 5'5"
+            entry.muscle = 18 - (progress * 2); // Losing muscle as gaining fat
+            entry.protein = variance(80, 0.15);
+            entry.carbs = variance(250, 0.2); // High carbs
+            entry.fats = variance(70, 0.15);
+            entry.water = variance(45, 0.2); // Poor hydration
+            entry.workouts = generateWorkouts(scenario, day, entry.weight);
+            break;
+            
+          case '2': // Heavy person losing weight (250→220 lb)
+            entry.weight = 113.4 - (progress * 13.6) + variance(0, 0.01); // 250→220 lb in kg
+            entry.height = 175; // 5'9"
+            entry.muscle = 22 + (progress * 3); // Gaining muscle
+            entry.protein = variance(150, 0.1);
+            entry.carbs = variance(120, 0.15); // Moderate carbs
+            entry.fats = variance(50, 0.1);
+            entry.water = variance(70, 0.1); // Good hydration
+            entry.workouts = generateWorkouts(scenario, day, entry.weight);
+            break;
+            
+          case '3': // Struggling to lose (plateau 188-192 lb)
+            const plateauBase = 86.2; // 190 lb
+            entry.weight = plateauBase + Math.sin(day * 0.5) * 0.9; // Fluctuate ±2 lb
+            entry.height = 170; // 5'7"
+            entry.muscle = 20 + variance(0, 0.05);
+            entry.protein = variance(100, 0.2);
+            entry.carbs = variance(180, 0.25); // Inconsistent
+            entry.fats = variance(60, 0.2);
+            entry.water = variance(50, 0.25); // Inconsistent
+            entry.workouts = generateWorkouts(scenario, day, entry.weight);
+            break;
+            
+          case '4': // Athlete building muscle (170 lb stable)
+            entry.weight = 77.1 + variance(0, 0.01); // Stable 170 lb
+            entry.height = 178; // 5'10"
+            entry.muscle = 25 + (progress * 5); // 25%→30% muscle
+            entry.protein = variance(180, 0.1); // High protein
+            entry.carbs = variance(200, 0.1);
+            entry.fats = variance(60, 0.1);
+            entry.water = variance(90, 0.1); // Great hydration
+            entry.workouts = generateWorkouts(scenario, day, entry.weight);
+            break;
+            
+          case '5': // Extreme weight loss (320→200 lb)
+            entry.weight = 145.1 - (progress * 54.4) + variance(0, 0.02); // 320→200 lb
+            entry.height = 180; // 5'11"
+            entry.muscle = 15 + (progress * 8); // Building muscle
+            entry.protein = variance(140, 0.1);
+            entry.carbs = variance(100, 0.15); // Low carbs
+            entry.fats = variance(45, 0.1);
+            entry.water = variance(80, 0.1);
+            entry.workouts = generateWorkouts(scenario, day, entry.weight);
+            break;
+            
+          case '6': // Yo-yo dieter (cycling)
+            const cycle = Math.sin(day * 0.4) * 6.8 + 81.6; // 175-190 lb cycle
+            entry.weight = cycle + variance(0, 0.01);
+            entry.height = 168; // 5'6"
+            entry.muscle = 19 + variance(0, 0.1);
+            entry.protein = variance(90, 0.3); // Very inconsistent
+            entry.carbs = variance(200, 0.4);
+            entry.fats = variance(65, 0.3);
+            entry.water = variance(40, 0.3);
+            entry.workouts = generateWorkouts(scenario, day, entry.weight);
+            break;
+            
+          case '7': // Dehydrated person (20-35 oz)
+            entry.weight = 68 + (progress * 4.5) + variance(0, 0.02); // Gaining (dehydration affects metabolism)
+            entry.height = 163; // 5'4"
+            entry.muscle = 17 + variance(0, 0.05);
+            entry.protein = variance(85, 0.15);
+            entry.carbs = variance(160, 0.2);
+            entry.fats = variance(55, 0.15);
+            entry.water = variance(28, 0.2); // Very low 20-35 oz
+            entry.workouts = generateWorkouts(scenario, day, entry.weight);
+            break;
+            
+          case '8': // Endurance athlete (100-150 oz water)
+            entry.weight = 63.5 - (progress * 1.4) + variance(0, 0.01); // Slight loss 140→137 lb
+            entry.height = 172; // 5'8"
+            entry.muscle = 23 + (progress * 2);
+            entry.protein = variance(120, 0.1);
+            entry.carbs = variance(280, 0.15); // High carbs for endurance
+            entry.fats = variance(50, 0.1);
+            entry.water = variance(125, 0.15); // Very high 100-150 oz
+            entry.workouts = generateWorkouts(scenario, day, entry.weight);
+            break;
+            
+          case '9': // Undereating (800-1200 cal)
+            entry.weight = 72 - (progress * 9) + variance(0, 0.02); // Rapid loss 159→139 lb
+            entry.height = 160; // 5'3"
+            entry.muscle = 16 - (progress * 3); // Losing muscle
+            entry.protein = variance(50, 0.2); // Very low protein
+            entry.carbs = variance(80, 0.25); // Very low carbs
+            entry.fats = variance(30, 0.2); // Very low fats (total ~800-1200 cal)
+            entry.water = variance(35, 0.2);
+            entry.workouts = generateWorkouts(scenario, day, entry.weight);
+            break;
+            
+          case '10': // Bodybuilder (3500-4500 cal)
+            entry.weight = 88 + (progress * 5.4) + variance(0, 0.01); // Bulking 194→206 lb
+            entry.height = 183; // 6'0"
+            entry.muscle = 28 + (progress * 4); // Major muscle gain
+            entry.protein = variance(220, 0.1); // Very high protein
+            entry.carbs = variance(400, 0.15); // Very high carbs
+            entry.fats = variance(100, 0.1); // High fats (total ~3500-4500 cal)
+            entry.water = variance(120, 0.1); // High hydration
+            entry.workouts = generateWorkouts(scenario, day, entry.weight);
+            break;
+            
+          default:
+            // Dynamic scenario generator for cases 11-100
+            const params = getScenarioParams(scenario);
+            if (params) {
+              entry.weight = params.startWeight + (progress * params.weightChange) + variance(0, params.weightVariance);
+              entry.height = params.height;
+              entry.muscle = params.startMuscle + (progress * params.muscleChange) + variance(0, 0.02);
+              entry.protein = variance(params.protein, params.macroVariance);
+              entry.carbs = variance(params.carbs, params.macroVariance);
+              entry.fats = variance(params.fats, params.macroVariance);
+              entry.water = variance(params.water, params.waterVariance);
+              entry.workouts = generateWorkouts(scenario, day, entry.weight);
+            }
+            break;
+        }
+        
+        // Round values
+        entry.weight = Math.round(entry.weight * 10) / 10;
+        entry.muscle = Math.round(entry.muscle * 10) / 10;
+        entry.protein = Math.round(entry.protein);
+        entry.carbs = Math.round(entry.carbs);
+        entry.fats = Math.round(entry.fats);
+        entry.water = Math.round(entry.water);
+        
+        entries.push(entry);
+      }
+      
+      return entries;
+    }
+    
+    function getBaselineStats(scenario) {
+      const s = parseInt(scenario);
+      
+      // For scenarios 11-100, derive from params
+      if (s >= 11 && s <= 100) {
+        const params = getScenarioParams(scenario);
+        if (params) {
+          const ages = {
+            11:14, 12:15, 13:16, 14:17, 15:18,
+            16:20, 17:22, 18:24, 19:25, 20:26, 21:27, 22:28, 23:29, 24:23, 25:25,
+            26:30, 27:32, 28:34, 29:31, 30:36, 31:33, 32:35, 33:37, 34:38, 35:39,
+            36:42, 37:45, 38:48, 39:44, 40:46, 41:43, 42:47, 43:41, 44:49, 45:44,
+            46:52, 47:54, 48:56, 49:58, 50:55, 51:53, 52:57, 53:59, 54:51, 55:54,
+            56:62, 57:65, 58:68, 59:71, 60:74,
+            61:29, 62:26, 63:31, 64:28, 65:22, 66:27, 67:24, 68:21, 69:33, 70:25,
+            71:36, 72:29, 73:44, 74:38, 75:32, 76:27, 77:51, 78:34, 79:41, 80:47,
+            81:30, 82:28, 83:35, 84:33, 85:40, 86:26, 87:31, 88:37, 89:29, 90:25,
+            91:34, 92:29, 93:45, 94:32, 95:27, 96:38, 97:41, 98:30, 99:48, 100:35
+          };
+          return {
+            age: ages[s],
+            weight: params.startWeight,
+            height: params.height,
+            muscle: params.startMuscle
+          };
+        }
+      }
+      
+      // Original 10 scenarios
+      const baselines = {
+        '1': { age: 19, weight: 59, height: 165, muscle: 18 },
+        '2': { age: 42, weight: 113.4, height: 175, muscle: 22 },
+        '3': { age: 35, weight: 86.2, height: 170, muscle: 20 },
+        '4': { age: 28, weight: 77.1, height: 178, muscle: 25 },
+        '5': { age: 38, weight: 145.1, height: 180, muscle: 15 },
+        '6': { age: 31, weight: 81.6, height: 168, muscle: 19 },
+        '7': { age: 24, weight: 68, height: 163, muscle: 17 },
+        '8': { age: 27, weight: 63.5, height: 172, muscle: 23 },
+        '9': { age: 21, weight: 72, height: 160, muscle: 16 },
+        '10': { age: 26, weight: 88, height: 183, muscle: 28 }
+      };
+      return baselines[scenario];
+    }
+    
+    function getProfileInfo(scenario) {
+      const profiles = {
+        '1': { name: 'Emma Chen', bio: 'College student gaining the freshman 15' },
+        '2': { name: 'Marcus Johnson', bio: 'Dad on a weight loss journey' },
+        '3': { name: 'Sarah Williams', bio: 'Struggling with plateau for weeks' },
+        '4': { name: 'Alex Rivera', bio: 'CrossFit athlete building muscle' },
+        '5': { name: 'David Thompson', bio: 'Extreme transformation in progress' },
+        '6': { name: 'Jessica Martinez', bio: 'Yo-yo dieter trying to find balance' },
+        '7': { name: 'Ryan Cooper', bio: 'Forgets to drink water consistently' },
+        '8': { name: 'Olivia Brooks', bio: 'Marathon runner staying hydrated' },
+        '9': { name: 'Mia Anderson', bio: 'Severely undereating, needs help' },
+        '10': { name: 'Tyler Grant', bio: 'Bodybuilder in bulking phase' },
+        // Teens
+        '11': { name: 'Jake Turner', bio: 'Growing teen athlete' },
+        '12': { name: 'Sophia Lee', bio: 'Teen on weight loss journey' },
+        '13': { name: 'Noah Garcia', bio: 'Underweight teen building strength' },
+        '14': { name: 'Mia Rodriguez', bio: 'Competitive swimmer' },
+        '15': { name: 'Ethan Brown', bio: 'Wrestler making weight class' },
+        // Young Adults
+        '16': { name: 'Ava Thompson', bio: 'College party lifestyle' },
+        '17': { name: 'Liam Davis', bio: 'Post-grad fitness transformation' },
+        '18': { name: 'Isabella Wilson', bio: 'Stressed young professional' },
+        '19': { name: 'Mason Moore', bio: 'Personal trainer lean bulking' },
+        '20': { name: 'Charlotte Taylor', bio: 'Plant-based lifestyle' },
+        '21': { name: 'Lucas Anderson', bio: 'Keto diet enthusiast' },
+        '22': { name: 'Amelia Thomas', bio: 'Marathon training' },
+        '23': { name: 'Logan Jackson', bio: 'CrossFit beginner' },
+        '24': { name: 'Harper White', bio: 'Weekend party goer' },
+        '25': { name: 'Elijah Harris', bio: 'Intermittent fasting' },
+        // Career Adults
+        '26': { name: 'Abigail Martin', bio: 'New parent adapting' },
+        '27': { name: 'James Clark', bio: 'Desk job struggles' },
+        '28': { name: 'Emily Lewis', bio: 'Recently divorced, rebuilding' },
+        '29': { name: 'Benjamin Walker', bio: 'Working mom on a mission' },
+        '30': { name: 'Elizabeth Hall', bio: 'Entrepreneur stress' },
+        '31': { name: 'Michael Allen', bio: 'Night shift nurse' },
+        '32': { name: 'Sofia Young', bio: 'Weekend warrior' },
+        '33': { name: 'Daniel King', bio: 'Powerlifter bulking phase' },
+        '34': { name: 'Avery Wright', bio: 'Yoga instructor lifestyle' },
+        '35': { name: 'Matthew Scott', bio: 'Restaurant owner temptations' },
+        // Midlife
+        '36': { name: 'Ella Green', bio: 'Reversing prediabetes' },
+        '37': { name: 'Alexander Baker', bio: 'Empty nester finding time' },
+        '38': { name: 'Grace Adams', bio: 'Navigating menopause' },
+        '39': { name: 'Henry Nelson', bio: 'Triathlete still competing' },
+        '40': { name: 'Chloe Carter', bio: 'Executive stress eating' },
+        '41': { name: 'Samuel Mitchell', bio: 'Craft beer enthusiast' },
+        '42': { name: 'Victoria Perez', bio: 'Injury recovery journey' },
+        '43': { name: 'Joseph Roberts', bio: 'Mediterranean diet success' },
+        '44': { name: 'Zoey Turner', bio: 'Testosterone therapy benefits' },
+        '45': { name: 'David Phillips', bio: 'Cycling enthusiast' },
+        // Pre-Retirement
+        '46': { name: 'Penelope Campbell', bio: 'Managing type 2 diabetes' },
+        '47': { name: 'Christopher Parker', bio: 'Retired military discipline' },
+        '48': { name: 'Lillian Evans', bio: 'Active grandparent' },
+        '49': { name: 'Andrew Edwards', bio: 'Hypertension diet changes' },
+        '50': { name: 'Nora Collins', bio: 'Golf and light activity' },
+        '51': { name: 'Joshua Stewart', bio: 'Cancer survivor rebuilding' },
+        '52': { name: 'Hannah Morris', bio: 'Arthritis limitations' },
+        '53': { name: 'Ryan Rogers', bio: 'Heart disease reversal' },
+        '54': { name: 'Scarlett Reed', bio: 'Masters athlete competing' },
+        '55': { name: 'Nathan Cook', bio: 'Downsizing stress' },
+        // Retirement
+        '56': { name: 'Aria Morgan', bio: 'Retired and less active' },
+        '57': { name: 'Jack Bell', bio: 'Active senior losing slowly' },
+        '58': { name: 'Luna Murphy', bio: 'Walking club member' },
+        '59': { name: 'Owen Rivera', bio: 'Medication side effects' },
+        '60': { name: 'Layla Cooper', bio: 'Widower adjusting' },
+        // Athletes
+        '61': { name: 'Carter Richardson', bio: 'Powerlifter strength focus' },
+        '62': { name: 'Riley Cox', bio: 'Olympic weightlifter' },
+        '63': { name: 'Wyatt Howard', bio: 'Rock climber lean gains' },
+        '64': { name: 'Paisley Ward', bio: 'MMA fighter cutting weight' },
+        '65': { name: 'Grayson Torres', bio: 'Gymnast low body fat' },
+        '66': { name: 'Skylar Peterson', bio: 'Rugby player bulking' },
+        '67': { name: 'Easton Gray', bio: 'Sprinter explosive power' },
+        '68': { name: 'Aurora Ramirez', bio: 'Swimmer high volume' },
+        '69': { name: 'Colton James', bio: 'Cyclist endurance focused' },
+        '70': { name: 'Violet Watson', bio: 'Basketball player agility' },
+        // Medical
+        '71': { name: 'Maverick Brooks', bio: 'Hypothyroid management' },
+        '72': { name: 'Hazel Kelly', bio: 'PCOS hormonal balance' },
+        '73': { name: 'Asher Sanders', bio: 'Post-surgery recovery' },
+        '74': { name: 'Ivy Price', bio: 'Chronic fatigue syndrome' },
+        '75': { name: 'Jaxon Bennett', bio: 'Celiac disease diet' },
+        '76': { name: 'Nova Wood', bio: 'Depression medication effects' },
+        '77': { name: 'Hudson Barnes', bio: 'Sleep apnea improvement' },
+        '78': { name: 'Willow Ross', bio: 'Lupus inflammation' },
+        '79': { name: 'Leo Henderson', bio: 'IBS dietary restrictions' },
+        '80': { name: 'Ruby Coleman', bio: 'Fibromyalgia challenges' },
+        // Diet Extremes
+        '81': { name: 'Axel Jenkins', bio: 'Carnivore diet experiment' },
+        '82': { name: 'Sadie Perry', bio: 'Raw vegan transition' },
+        '83': { name: 'Kai Powell', bio: 'OMAD lifestyle' },
+        '84': { name: 'Madelyn Long', bio: 'Paleo clean eating' },
+        '85': { name: 'Jasper Patterson', bio: 'Low-carb high-fat' },
+        '86': { name: 'Ellie Hughes', bio: 'High-carb vegan athlete' },
+        '87': { name: 'Finn Flores', bio: 'Juice cleanse detox' },
+        '88': { name: 'Quinn Washington', bio: 'Whole30 elimination' },
+        '89': { name: 'Theo Butler', bio: 'Flexible dieting IIFYM' },
+        '90': { name: 'Piper Simmons', bio: 'Intuitive eating recovery' },
+        // Lifestyle
+        '91': { name: 'Knox Foster', bio: 'Shift worker challenges' },
+        '92': { name: 'Athena Gonzales', bio: 'Travel nurse life' },
+        '93': { name: 'River Bryant', bio: 'Truck driver sedentary' },
+        '94': { name: 'Sage Russell', bio: 'Chef tasting all day' },
+        '95': { name: 'Atlas Griffin', bio: 'Bartender late nights' },
+        '96': { name: 'Iris Diaz', bio: 'Construction worker active' },
+        '97': { name: 'Phoenix Hayes', bio: 'Teacher stress eating' },
+        '98': { name: 'Ember Myers', bio: 'Software engineer desk life' },
+        '99': { name: 'Orion Ford', bio: 'Farmer physical labor' },
+        '100': { name: 'Jade Hamilton', bio: 'Firefighter strength' }
+      };
+      return profiles[scenario];
+    }
+    
+    function populateData() {
+      const scenario = document.getElementById('scenario').value;
+      document.getElementById('log').innerHTML = '';
+      
+      log(`Starting Test Scenario ${scenario}...`);
+      
+      // Generate entries
+      const entries = generateEntries(scenario);
+      log(`✓ Generated ${entries.length} entries`, 'success');
+      
+      // Save entries
+      localStorage.setItem(`btb_entries_${PUBLIC_USER}`, JSON.stringify(entries));
+      log(`✓ Saved entries to localStorage`, 'success');
+      
+      // Save baseline
+      const baseline = getBaselineStats(scenario);
+      baseline.weightDisplay = (baseline.weight * 2.20462).toFixed(1);
+      baseline.weightUnit = 'lb';
+      localStorage.setItem(`btb_baseline_${PUBLIC_USER}`, JSON.stringify(baseline));
+      log(`✓ Saved baseline: Age ${baseline.age}, ${baseline.weightDisplay} lb, ${Math.floor(baseline.height / 30.48)}'${Math.round((baseline.height % 30.48) / 2.54)}", ${baseline.muscle}% muscle`, 'success');
+      
+      // Save profile
+      const profile = getProfileInfo(scenario);
+      localStorage.setItem(`btb_profile_${PUBLIC_USER}`, JSON.stringify(profile));
+      log(`✓ Saved profile: ${profile.name}`, 'success');
+      
+      // Set privacy (all visible)
+      const privacy = {
+        silhouette: true,
+        bmi: true,
+        progress: true,
+        athleticism: true,
+        water: true,
+        macros: true,
+        projections: true
+      };
+      localStorage.setItem(`btb_privacy_${PUBLIC_USER}`, JSON.stringify(privacy));
+      log(`✓ Set privacy settings (all visible)`, 'success');
+      
+      // Summary
+      log('─────────────────────────────────');
+      const firstEntry = entries[0];
+      const lastEntry = entries[entries.length - 1];
+      const firstWeight = (firstEntry.weight * 2.20462).toFixed(1);
+      const lastWeight = (lastEntry.weight * 2.20462).toFixed(1);
+      const weightChange = (lastWeight - firstWeight).toFixed(1);
+      const avgCalories = Math.round((firstEntry.protein * 4) + (firstEntry.carbs * 4) + (firstEntry.fats * 9));
+      const avgWater = Math.round((entries.reduce((sum, e) => sum + e.water, 0)) / entries.length);
+      
+      log(`📊 Summary:`, 'success');
+      log(`  Weight: ${firstWeight} lb → ${lastWeight} lb (${weightChange > 0 ? '+' : ''}${weightChange} lb)`, 'success');
+      log(`  Avg Calories: ~${avgCalories} cal/day`, 'success');
+      log(`  Avg Water: ${avgWater} oz/day`, 'success');
+      log(`  Date Range: ${firstEntry.date} to ${lastEntry.date}`, 'success');
+      log('─────────────────────────────────');
+      log('✅ Data loaded! Open index.html or admin.html to view.', 'success');
+    }
+  </script>
+</body>
+</html>

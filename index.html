@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>btb.fit – Body Tracker</title>
+  <!-- Include Chart.js via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Link to our stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="logo-container">
+        <img src="assets/logo.png" alt="BTB Logo" class="logo-img" id="secret-admin-link" style="cursor: pointer;" title="btb.fit">
+        <div class="brand">
+          <span class="brand-name">btb<span class="dot">.fit</span></span>
+          <span class="brand-tag">Body Tracking Benchmark</span>
+        </div>
+      </div>
+      <div class="user-bar">
+        <span id="profile-user">Loading...</span>
+      </div>
+    </header>
+    <main>
+      <div class="charts-grid">
+        <div class="card silhouette-card">
+          <h2>Current Stats</h2>
+          <div class="silhouette-wrapper">
+            <img id="profile-silhouette" class="silhouette-img" src="assets/male_silhouette_black.png" alt="Silhouette">
+            <div class="silhouette-info">
+              <p><strong>BMI:</strong> <span id="profile-bmi">–</span></p>
+              <p><strong>Status:</strong> <span id="profile-status">–</span></p>
+              <p><strong>Hydration:</strong> <span id="profile-hydration">–</span></p>
+              <p><strong>Nutrition:</strong> <span id="profile-nutrition">–</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="progress-card">
+          <h2>Progress over time</h2>
+          <canvas id="profile-chart"></canvas>
+        </div>
+
+        <div class="card" id="bmi-card">
+          <h2>BMI Over Time</h2>
+          <canvas id="profile-bmi-chart"></canvas>
+        </div>
+
+        <div class="card" id="athletic-card">
+          <h2>Athleticism Score</h2>
+          <canvas id="profile-athletic-chart"></canvas>
+        </div>
+
+        <div class="card" id="water-card">
+          <h2>Water Intake</h2>
+          <canvas id="profile-water-chart"></canvas>
+        </div>
+
+        <div class="card chart-card" id="macros-module">
+          <h2>Daily Macros</h2>
+          <canvas id="public-macros-chart"></canvas>
+        </div>
+      </div>
+
+      <div class="card" id="projections-module" style="margin-top: 24px;">
+        <h2>Weight Projections</h2>
+        <p style="font-size: 13px; color: #9aa8c7; margin-bottom: 16px;">
+          Based on weight loss pattern, nutrition, and hydration trends
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div class="projection-card">
+            <div class="projection-period">7 Days</div>
+            <div class="projection-weight" id="public-proj-7">—</div>
+            <div class="projection-change" id="public-proj-change-7">—</div>
+          </div>
+          <div class="projection-card">
+            <div class="projection-period">15 Days</div>
+            <div class="projection-weight" id="public-proj-15">—</div>
+            <div class="projection-change" id="public-proj-change-15">—</div>
+          </div>
+          <div class="projection-card">
+            <div class="projection-period">30 Days</div>
+            <div class="projection-weight" id="public-proj-30">—</div>
+            <div class="projection-change" id="public-proj-change-30">—</div>
+          </div>
+          <div class="projection-card">
+            <div class="projection-period">180 Days</div>
+            <div class="projection-weight" id="public-proj-180">—</div>
+            <div class="projection-change" id="public-proj-change-180">—</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Our script -->
+  <script src="public-profile.js"></script>
+  <script>
+    // Secret admin access - click logo to go to admin page
+    document.getElementById('secret-admin-link').addEventListener('click', function() {
+      window.location.href = 'admin.html';
+    });
+  </script>
+</body>
+</html>

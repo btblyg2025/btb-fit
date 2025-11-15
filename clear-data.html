@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clear Data - BTB Fit</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #ff4757;
+      color: white;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background: #ff3838;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Clear All Data</h1>
+    <p>This will permanently delete all stored data for user: btbga</p>
+    <button onclick="clearAllData()">Clear All Data</button>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    function clearAllData() {
+      const username = 'btbga';
+      
+      // Clear all data
+      localStorage.removeItem(`btb_entries_${username}`);
+      localStorage.removeItem(`btb_baseline_${username}`);
+      localStorage.removeItem(`btb_privacy_${username}`);
+      
+      document.getElementById('status').innerHTML = '<strong style="color: #2ed573;">✓ All data cleared successfully!</strong>';
+      
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
