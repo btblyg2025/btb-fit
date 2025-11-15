@@ -412,6 +412,33 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     saveBaselineStats(baseline);
+    
+    // Repopulate fields with saved values
+    document.getElementById('baseline-age-input').value = baseline.age;
+    document.getElementById('baseline-weight-input').value = baseline.weightDisplay;
+    document.getElementById('baseline-weight-unit').value = baseline.weightUnit;
+    const totalInchesDisplay = baseline.height / 2.54;
+    const feetDisplay = Math.floor(totalInchesDisplay / 12);
+    const inchesDisplay = (totalInchesDisplay % 12).toFixed(1);
+    document.getElementById('baseline-height-ft').value = feetDisplay;
+    document.getElementById('baseline-height-in').value = inchesDisplay;
+    if (baseline.muscle !== undefined) {
+      document.getElementById('baseline-muscle-input').value = baseline.muscle;
+    }
+    if (baseline.bodyFat !== undefined) {
+      document.getElementById('baseline-body-fat-input').value = baseline.bodyFat;
+    }
+    if (baseline.bodyWater !== undefined) {
+      document.getElementById('baseline-body-water-input').value = baseline.bodyWater;
+    }
+    if (baseline.boneMass !== undefined) {
+      const boneMassLb = baseline.boneMass * 2.20462;
+      document.getElementById('baseline-bone-mass-input').value = boneMassLb.toFixed(1);
+    }
+    if (baseline.bmr !== undefined) {
+      document.getElementById('baseline-bmr-input').value = baseline.bmr;
+    }
+    
     baselineEditMode = false;
     lockBaselineFields();
     alert('Baseline stats saved successfully!');
@@ -448,6 +475,10 @@ document.addEventListener('DOMContentLoaded', () => {
     userProfile.displayName = displayName;
     saveUserProfile();
     syncToCloud('profile', userProfile);
+    
+    // Repopulate field with saved value
+    document.getElementById('display-name-input').value = displayName;
+    
     profileEditMode = false;
     lockProfileFields();
     
