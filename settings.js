@@ -186,11 +186,16 @@ function validateDisplayName(name) {
 
 // Update the saved data display at the top
 function updateSavedDataDisplay() {
+  console.log('updateSavedDataDisplay called');
   const baseline = loadBaselineStats();
   const profile = userProfile;
   
+  console.log('Baseline data:', baseline);
+  console.log('Profile data:', profile);
+  
   // Display name
   const displayNameEl = document.getElementById('display-name-display');
+  console.log('Display name element:', displayNameEl);
   if (displayNameEl) {
     displayNameEl.textContent = profile.displayName || 'Not set';
     displayNameEl.style.color = profile.displayName ? '#34e27c' : '#9aa8c7';
@@ -248,6 +253,8 @@ function updateSavedDataDisplay() {
     bodyFatEl.textContent = 'Not set';
     bodyFatEl.style.color = '#9aa8c7';
   }
+  
+  console.log('Display update complete');
 }
 
 // Lock baseline fields
@@ -485,6 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     saveBaselineStats(baseline);
+    console.log('Baseline saved, now updating display...');
     
     // Repopulate fields with saved values
     document.getElementById('baseline-age-input').value = baseline.age;
@@ -514,7 +522,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     baselineEditMode = false;
     lockBaselineFields();
-    updateSavedDataDisplay();
+    
+    // Update the display at the top
+    setTimeout(() => {
+      updateSavedDataDisplay();
+      console.log('Display updated');
+    }, 100);
+    
     alert('Baseline stats saved successfully!');
     console.log('Saved baseline:', baseline);
   });
