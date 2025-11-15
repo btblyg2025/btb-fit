@@ -38,6 +38,39 @@
     </header>
 
     <main style="display: flex; flex-direction: column; gap: 24px; max-width: 800px; margin: 0 auto;">
+      <!-- Current Saved Data Display -->
+      <div class="card" style="background: linear-gradient(135deg, #1a2332 0%, #2a3847 100%); border: 2px solid #34e27c;">
+        <h2 style="margin-bottom: 16px; color: #34e27c;">📊 Currently Saved Data</h2>
+        <div id="saved-data-display">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+            <div>
+              <p style="font-size: 12px; color: #9aa8c7; margin-bottom: 4px;">Display Name</p>
+              <p id="display-name-display" style="font-size: 16px; font-weight: 600; color: #e5e9f0;">Not set</p>
+            </div>
+            <div>
+              <p style="font-size: 12px; color: #9aa8c7; margin-bottom: 4px;">Age</p>
+              <p id="age-display" style="font-size: 16px; font-weight: 600; color: #e5e9f0;">Not set</p>
+            </div>
+            <div>
+              <p style="font-size: 12px; color: #9aa8c7; margin-bottom: 4px;">Height</p>
+              <p id="height-display" style="font-size: 16px; font-weight: 600; color: #e5e9f0;">Not set</p>
+            </div>
+            <div>
+              <p style="font-size: 12px; color: #9aa8c7; margin-bottom: 4px;">Weight</p>
+              <p id="weight-display" style="font-size: 16px; font-weight: 600; color: #e5e9f0;">Not set</p>
+            </div>
+            <div>
+              <p style="font-size: 12px; color: #9aa8c7; margin-bottom: 4px;">Muscle %</p>
+              <p id="muscle-display" style="font-size: 16px; font-weight: 600; color: #e5e9f0;">Not set</p>
+            </div>
+            <div>
+              <p style="font-size: 12px; color: #9aa8c7; margin-bottom: 4px;">Body Fat %</p>
+              <p id="body-fat-display" style="font-size: 16px; font-weight: 600; color: #e5e9f0;">Not set</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="card">
         <h2>Baseline Stats</h2>
         <p style="font-size: 13px; color: #9aa8c7; margin-bottom: 16px;">

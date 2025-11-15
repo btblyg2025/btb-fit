@@ -181,7 +181,77 @@ async function syncToCloud(dataType, data) {
 // Validate display name
 function validateDisplayName(name) {
   if (!name || name.trim().length === 0) {
-    return { valid: true, error: '' };
+  return { valid: true, error: '' };
+}
+
+// Update the saved data display at the top
+function updateSavedDataDisplay() {
+  const baseline = loadBaselineStats();
+  const profile = userProfile;
+  
+  // Display name
+  const displayNameEl = document.getElementById('display-name-display');
+  if (displayNameEl) {
+    displayNameEl.textContent = profile.displayName || 'Not set';
+    displayNameEl.style.color = profile.displayName ? '#34e27c' : '#9aa8c7';
+  }
+  
+  // Age
+  const ageEl = document.getElementById('age-display');
+  if (ageEl && baseline && baseline.age) {
+    ageEl.textContent = baseline.age + ' years';
+    ageEl.style.color = '#34e27c';
+  } else if (ageEl) {
+    ageEl.textContent = 'Not set';
+    ageEl.style.color = '#9aa8c7';
+  }
+  
+  // Height
+  const heightEl = document.getElementById('height-display');
+  if (heightEl && baseline && baseline.height) {
+    const totalInches = baseline.height / 2.54;
+    const feet = Math.floor(totalInches / 12);
+    const inches = Math.round(totalInches % 12);
+    heightEl.textContent = `${feet}'${inches}"`;
+    heightEl.style.color = '#34e27c';
+  } else if (heightEl) {
+    heightEl.textContent = 'Not set';
+    heightEl.style.color = '#9aa8c7';
+  }
+  
+  // Weight
+  const weightEl = document.getElementById('weight-display');
+  if (weightEl && baseline && baseline.weight) {
+    weightEl.textContent = `${baseline.weightDisplay} ${baseline.weightUnit}`;
+    weightEl.style.color = '#34e27c';
+  } else if (weightEl) {
+    weightEl.textContent = 'Not set';
+    weightEl.style.color = '#9aa8c7';
+  }
+  
+  // Muscle
+  const muscleEl = document.getElementById('muscle-display');
+  if (muscleEl && baseline && baseline.muscle) {
+    muscleEl.textContent = baseline.muscle + '%';
+    muscleEl.style.color = '#34e27c';
+  } else if (muscleEl) {
+    muscleEl.textContent = 'Not set';
+    muscleEl.style.color = '#9aa8c7';
+  }
+  
+  // Body Fat
+  const bodyFatEl = document.getElementById('body-fat-display');
+  if (bodyFatEl && baseline && baseline.bodyFat) {
+    bodyFatEl.textContent = baseline.bodyFat + '%';
+    bodyFatEl.style.color = '#34e27c';
+  } else if (bodyFatEl) {
+    bodyFatEl.textContent = 'Not set';
+    bodyFatEl.style.color = '#9aa8c7';
+  }
+}
+
+// Lock baseline fields
+function lockBaselineFields() {
   }
   
   const trimmed = name.trim();
@@ -218,6 +288,9 @@ function validateDisplayName(name) {
 function initSettings() {
   loadUserProfile();
   loadPrivacySettings();
+  
+  // Update the saved data display
+  updateSavedDataDisplay();
   
   // Populate profile form
   document.getElementById('display-name-input').value = userProfile.displayName || '';
@@ -441,6 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     baselineEditMode = false;
     lockBaselineFields();
+    updateSavedDataDisplay();
     alert('Baseline stats saved successfully!');
     console.log('Saved baseline:', baseline);
   });
@@ -481,6 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     profileEditMode = false;
     lockProfileFields();
+    updateSavedDataDisplay();
     
     alert('Profile saved successfully!');
     console.log('Saved profile:', userProfile);
