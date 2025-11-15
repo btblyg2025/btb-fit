@@ -13,9 +13,9 @@ const saveData = require('./api/save-data');
 const loadData = require('./api/load-data');
 
 // API routes
-app.post('/api/verify-password', (req, res) => verifyPassword.default(req, res));
-app.post('/api/save-data', (req, res) => saveData.default(req, res));
-app.post('/api/load-data', (req, res) => loadData.default(req, res));
+app.post('/api/verify-password', verifyPassword);
+app.post('/api/save-data', saveData);
+app.post('/api/load-data', loadData);
 
 // Serve HTML files
 app.get('/', (req, res) => {
