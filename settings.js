@@ -161,6 +161,7 @@ function unlockSettings() {
 // Lock settings interface
 function lockSettings() {
   isAuthenticated = false;
+  sessionStorage.removeItem('btb_auth_token');
   document.getElementById('app').classList.add('hidden');
   document.getElementById('password-modal').style.display = 'flex';
   document.getElementById('password-input').value = '';
@@ -170,6 +171,14 @@ function lockSettings() {
 // On DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Settings page loaded');
+  
+  // Check if already authenticated
+  const authToken = sessionStorage.getItem('btb_auth_token');
+  if (authToken) {
+    console.log('Already authenticated, unlocking...');
+    unlockSettings();
+    return;
+  }
   
   // Password form handler
   const passwordForm = document.getElementById('password-form');
@@ -203,6 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (data.valid) {
         console.log('Password valid, unlocking...');
+        sessionStorage.setItem('btb_auth_token', data.token);
         unlockSettings();
       } else {
         console.log('Password invalid');

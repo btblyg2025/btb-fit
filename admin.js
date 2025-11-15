@@ -835,6 +835,7 @@ function unlockAdmin() {
 // Lock admin interface
 function lockAdmin() {
   isAuthenticated = false;
+  sessionStorage.removeItem('btb_auth_token');
   document.getElementById('app').classList.add('hidden');
   document.getElementById('password-modal').style.display = 'flex';
   document.getElementById('password-input').value = '';
@@ -846,6 +847,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Check if Chart.js loaded
   if (typeof Chart === 'undefined') {
     alert('Failed to load Chart.js library. Charts will not be displayed.');
+  }
+
+  // Check if already authenticated
+  const authToken = sessionStorage.getItem('btb_auth_token');
+  if (authToken) {
+    unlockAdmin();
+    return;
   }
 
   // Password form handler
@@ -869,6 +877,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
       
       if (data.valid) {
+        sessionStorage.setItem('btb_auth_token', data.token);
         unlockAdmin();
       } else {
         errorMsg.style.display = 'block';
