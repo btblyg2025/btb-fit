@@ -67,13 +67,40 @@ const utils = {
       }
     }
     return thresholds[thresholds.length - 1];
+  },
+  
+  loadFromServer: async (endpoint, fallbackKey, defaultValue) => {
+    try {
+      const response = await fetch(endpoint, { method: 'GET' });
+      if (response.ok) {
+        const result = await response.json();
+        // Cache to localStorage for offline access
+        if (fallbackKey && result.data) {
+          localStorage.setItem(fallbackKey, JSON.stringify(result.data));
+        }
+        return result.data || defaultValue;
+      }
+    } catch (e) {
+      console.warn(`Failed to load from ${endpoint}, using fallback:`, e);
+    }
+    // Fallback to localStorage
+    return utils.getFromStorage(fallbackKey, defaultValue);
   }
 };
 
 // Load initial data
-state.privacySettings = utils.getFromStorage(`btb_privacy_${PUBLIC_USER}`, state.privacySettings);
-state.userProfile = utils.getFromStorage(`btb_profile_${PUBLIC_USER}`, state.userProfile);
-state.entries = utils.getFromStorage(`btb_entries_${PUBLIC_USER}`, []);
+const initData = async () => {
+  // Load privacy from server (affects ALL users)
+  state.privacySettings = await utils.loadFromServer(
+    '/api/load-privacy',
+    `btb_privacy_${PUBLIC_USER}`,
+    state.privacySettings
+  );
+  
+  // Load profile and entries from localStorage
+  state.userProfile = utils.getFromStorage(`btb_profile_${PUBLIC_USER}`, state.userProfile);
+  state.entries = utils.getFromStorage(`btb_entries_${PUBLIC_USER}`, []);
+};
 
 // Initialize header
 const initHeader = () => {
@@ -100,18 +127,13 @@ const privacy = {
   ],
   
   apply: () => {
-    console.log('Applying privacy settings:', state.privacySettings);
-    
     privacy.cardConfigs.forEach(({ selector, key }) => {
       const element = document.querySelector(selector);
       const isVisible = state.privacySettings[key];
-      console.log(`Privacy check - Selector: ${selector}, Key: ${key}, Element found: ${!!element}, IsVisible: ${isVisible}, Display will be: ${isVisible ? 'block' : 'none'}`);
       if (element) {
         element.style.display = isVisible ? 'block' : 'none';
       }
     });
-    
-    console.log('Privacy settings applied');
   }
 };
 
@@ -589,7 +611,10 @@ const projections = {
 };
 
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Load data from server first (especially privacy settings)
+  await initData();
+  
   initHeader();
   silhouette.update();
   charts.updateProgress();

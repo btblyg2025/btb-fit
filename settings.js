@@ -47,27 +47,62 @@ function saveUserProfile() {
   }
 }
 
-// Load privacy settings
-function loadPrivacySettings() {
+// Load privacy settings from server
+async function loadPrivacySettings() {
   if (!currentUser) return;
   try {
-    const raw = localStorage.getItem(`btb_privacy_${currentUser}`);
-    if (raw) {
-      const savedSettings = JSON.parse(raw);
+    // Try to load from server first
+    const response = await fetch('/api/load-privacy', {
+      method: 'GET'
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      const savedSettings = result.data;
+      
       // Update each card's visibility from saved settings
       privacyCards.forEach(card => {
         if (savedSettings.hasOwnProperty(card.id)) {
           card.isVisible = savedSettings[card.id];
         }
       });
+      
+      // Also save to localStorage for offline access
+      localStorage.setItem(`btb_privacy_${currentUser}`, JSON.stringify(savedSettings));
+      console.log('Privacy settings loaded from server');
+    } else {
+      // Fallback to localStorage if server fails
+      const raw = localStorage.getItem(`btb_privacy_${currentUser}`);
+      if (raw) {
+        const savedSettings = JSON.parse(raw);
+        privacyCards.forEach(card => {
+          if (savedSettings.hasOwnProperty(card.id)) {
+            card.isVisible = savedSettings[card.id];
+          }
+        });
+      }
     }
   } catch (e) {
     console.error('Failed to load privacy settings:', e);
+    // Fallback to localStorage
+    try {
+      const raw = localStorage.getItem(`btb_privacy_${currentUser}`);
+      if (raw) {
+        const savedSettings = JSON.parse(raw);
+        privacyCards.forEach(card => {
+          if (savedSettings.hasOwnProperty(card.id)) {
+            card.isVisible = savedSettings[card.id];
+          }
+        });
+      }
+    } catch (err) {
+      console.error('localStorage fallback failed:', err);
+    }
   }
 }
 
-// Save privacy settings
-function savePrivacySettings() {
+// Save privacy settings to server and localStorage
+async function savePrivacySettings() {
   if (!currentUser) return;
   try {
     // Convert array back to object format for storage
@@ -75,7 +110,25 @@ function savePrivacySettings() {
     privacyCards.forEach(card => {
       settingsObj[card.id] = card.isVisible;
     });
+    
+    // Save to localStorage immediately
     localStorage.setItem(`btb_privacy_${currentUser}`, JSON.stringify(settingsObj));
+    
+    // Sync to server
+    const token = sessionStorage.getItem('btb_auth_token');
+    if (token) {
+      const response = await fetch('/api/save-privacy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, privacySettings: settingsObj })
+      });
+      
+      if (response.ok) {
+        console.log('✓ Privacy settings synced to server');
+      } else {
+        console.warn('Failed to sync privacy to server');
+      }
+    }
   } catch (e) {
     console.error('Failed to save privacy settings:', e);
   }
@@ -279,11 +332,11 @@ function updateSavedDataDisplay() {
   console.log('Display update complete');
 }
 
-// Initialize settings
-function initSettings() {
-  console.log('initSettings called');
+// Initialize settings UI
+async function initSettings() {
+  console.log('initSettings started');
   loadUserProfile();
-  loadPrivacySettings();
+  await loadPrivacySettings();
   
   // Update the saved data display
   updateSavedDataDisplay();
@@ -347,11 +400,7 @@ function initSettings() {
           label.textContent = card.isVisible ? 'Public' : 'Private';
           label.style.color = card.isVisible ? '#34e27c' : '#e57373';
         }
-        savePrivacySettings();
-        // Convert to object format for cloud sync
-        const settingsObj = {};
-        privacyCards.forEach(c => settingsObj[c.id] = c.isVisible);
-        syncToCloud('privacy', settingsObj);
+        savePrivacySettings(); // Now handles both localStorage and server sync
       });
     }
   });
