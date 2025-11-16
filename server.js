@@ -26,11 +26,15 @@ initDB().catch(err => console.error('Failed to initialize database:', err));
 const verifyPassword = require('./api/verify-password');
 const saveData = require('./api/save-data');
 const loadData = require('./api/load-data');
+const savePrivacy = require('./api/save-privacy');
+const loadPrivacy = require('./api/load-privacy');
 
 // API routes
 app.post('/api/verify-password', verifyPassword);
 app.post('/api/save-data', saveData);
 app.post('/api/load-data', loadData);
+app.post('/api/save-privacy', savePrivacy);
+app.get('/api/load-privacy', loadPrivacy);
 
 // Serve HTML files
 app.get('/', (req, res) => {
