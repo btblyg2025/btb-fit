@@ -4,7 +4,8 @@ const ADMIN_USER = 'btbga';
 
 let currentUser = ADMIN_USER;
 let userProfile = {
-  displayName: ''
+  displayName: '',
+  heightUnit: 'imperial' // 'imperial' or 'metric'
 };
 
 // Privacy cards as array of objects
@@ -258,10 +259,11 @@ function updateSavedDataDisplay() {
   // Height
   const heightEl = document.getElementById('height-display');
   if (heightEl && baseline && baseline.height) {
-    const totalInches = baseline.height / 2.54;
+    const heightCm = baseline.height;
+    const totalInches = heightCm / 2.54;
     const feet = Math.floor(totalInches / 12);
     const inches = Math.round(totalInches % 12);
-    heightEl.textContent = `${feet}'${inches}"`;
+    heightEl.textContent = `${feet}'${inches}" (${heightCm.toFixed(1)} cm)`;
     heightEl.style.color = '#34e27c';
   } else if (heightEl) {
     heightEl.textContent = 'Not set';
@@ -503,16 +505,58 @@ function showFieldEditor(fieldName) {
       break;
     case 'height':
       const heightCm = baseline?.height || 0;
+      const heightUnit = userProfile?.heightUnit || 'imperial';
       const totalInches = heightCm / 2.54;
       const feet = Math.floor(totalInches / 12);
       const inches = (totalInches % 12).toFixed(1);
       html = `
         <label>Height</label>
-        <div style="display: flex; gap: 8px;">
-          <input type="number" id="edit-field-ft" value="${heightCm ? feet : ''}" placeholder="ft" min="0" max="8" required>
-          <input type="number" id="edit-field-in" value="${heightCm ? inches : ''}" placeholder="in" min="0" max="11" step="0.5" required>
+        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+          <select id="height-unit-toggle" class="unit-select" style="flex: 1;">
+            <option value="imperial" ${heightUnit === 'imperial' ? 'selected' : ''}>Imperial (ft/in)</option>
+            <option value="metric" ${heightUnit === 'metric' ? 'selected' : ''}>Metric (cm)</option>
+          </select>
+        </div>
+        <div id="height-input-container">
+          ${heightUnit === 'imperial' ? `
+            <div style="display: flex; gap: 8px;">
+              <input type="number" id="edit-field-ft" value="${heightCm ? feet : ''}" placeholder="ft" min="0" max="8" required>
+              <input type="number" id="edit-field-in" value="${heightCm ? inches : ''}" placeholder="in" min="0" max="11" step="0.5" required>
+            </div>
+          ` : `
+            <input type="number" id="edit-field-cm" value="${heightCm || ''}" placeholder="cm" min="100" max="250" step="0.1" required>
+          `}
         </div>
       `;
+      
+      // Add event listener to toggle between units after rendering
+      setTimeout(() => {
+        const unitToggle = document.getElementById('height-unit-toggle');
+        if (unitToggle) {
+          unitToggle.addEventListener('change', function() {
+            const newUnit = this.value;
+            userProfile.heightUnit = newUnit;
+            const container = document.getElementById('height-input-container');
+            const currentHeightCm = baseline?.height || 0;
+            const currentInches = currentHeightCm / 2.54;
+            const currentFeet = Math.floor(currentInches / 12);
+            const currentIn = (currentInches % 12).toFixed(1);
+            
+            if (newUnit === 'imperial') {
+              container.innerHTML = `
+                <div style="display: flex; gap: 8px;">
+                  <input type="number" id="edit-field-ft" value="${currentHeightCm ? currentFeet : ''}" placeholder="ft" min="0" max="8" required>
+                  <input type="number" id="edit-field-in" value="${currentHeightCm ? currentIn : ''}" placeholder="in" min="0" max="11" step="0.5" required>
+                </div>
+              `;
+            } else {
+              container.innerHTML = `
+                <input type="number" id="edit-field-cm" value="${currentHeightCm || ''}" placeholder="cm" min="100" max="250" step="0.1" required>
+              `;
+            }
+          });
+        }
+      }, 0);
       break;
     case 'weight':
       html = `
@@ -603,10 +647,16 @@ function saveFieldEdit(e) {
       break;
       
     case 'height':
-      const feet = parseFloat(document.getElementById('edit-field-ft').value);
-      const inches = parseFloat(document.getElementById('edit-field-in').value);
-      const totalInches = (feet * 12) + inches;
-      baseline.height = totalInches * 2.54;
+      const heightUnit = userProfile?.heightUnit || 'imperial';
+      if (heightUnit === 'imperial') {
+        const feet = parseFloat(document.getElementById('edit-field-ft').value);
+        const inches = parseFloat(document.getElementById('edit-field-in').value);
+        const totalInches = (feet * 12) + inches;
+        baseline.height = totalInches * 2.54;
+      } else {
+        baseline.height = parseFloat(document.getElementById('edit-field-cm').value);
+      }
+      saveUserProfile(); // Save unit preference
       saveBaselineStats(baseline);
       break;
       
