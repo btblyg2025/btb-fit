@@ -262,6 +262,13 @@ const chartFactory = {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     
+    // Check if parent card is hidden by privacy settings
+    const parentCard = canvas.closest('.card');
+    if (parentCard && parentCard.style.display === 'none') {
+      console.log(`⏭️ Skipping chart ${chartKey} - parent card is hidden`);
+      return;
+    }
+    
     const sorted = utils.sortByDate(state.entries);
     const labels = sorted.map(e => e.date);
     
