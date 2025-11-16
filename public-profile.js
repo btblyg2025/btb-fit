@@ -640,6 +640,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('✅ initData() completed');
   
   console.log('🔄 Initializing UI...');
+  
+  // Apply privacy settings FIRST (before rendering charts)
+  console.log('🔒 Applying privacy settings...');
+  privacy.apply();
+  console.log('✅ Privacy applied');
+  
+  // Then render visible content
   initHeader();
   silhouette.update();
   charts.updateProgress();
@@ -649,9 +656,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   charts.updateMacros();
   charts.updateBodyComp();
   projections.calculate();
-  console.log('🔄 Applying privacy settings...');
-  privacy.apply();
-  console.log('✅ Privacy applied');
   
   const adminLink = document.getElementById('secret-admin-link');
   if (adminLink) {
