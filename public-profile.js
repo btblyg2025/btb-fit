@@ -104,8 +104,10 @@ const privacy = {
     
     privacy.cardConfigs.forEach(({ selector, key }) => {
       const element = document.querySelector(selector);
+      const isVisible = state.privacySettings[key];
+      console.log(`Privacy check - Selector: ${selector}, Key: ${key}, Element found: ${!!element}, IsVisible: ${isVisible}, Display will be: ${isVisible ? 'block' : 'none'}`);
       if (element) {
-        element.style.display = state.privacySettings[key] ? 'block' : 'none';
+        element.style.display = isVisible ? 'block' : 'none';
       }
     });
     
