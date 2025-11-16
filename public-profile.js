@@ -408,7 +408,7 @@ const charts = {
       return;
     }
     
-    const canvas = document.getElementById('profile-body-comp-chart');
+    const canvas = document.getElementById('public-body-comp-chart');
     if (!canvas) return;
     
     const labels = entriesWithData.map(e => e.date);
