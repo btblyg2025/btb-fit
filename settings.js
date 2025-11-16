@@ -409,11 +409,54 @@ async function initSettings() {
 }
 
 // Show settings interface
-function unlockSettings() {
+async function unlockSettings() {
   isAuthenticated = true;
   document.getElementById('password-modal').style.display = 'none';
   document.getElementById('app').classList.remove('hidden');
-  initSettings();
+  
+  // Migrate existing localStorage privacy to server if needed
+  await migratePrivacyToServer();
+  
+  await initSettings();
+}
+
+// Migrate existing localStorage privacy settings to server
+async function migratePrivacyToServer() {
+  const token = sessionStorage.getItem('btb_auth_token');
+  if (!token || !currentUser) return;
+  
+  try {
+    // Check if server already has privacy data
+    const checkResponse = await fetch('/api/load-privacy', { method: 'GET' });
+    if (checkResponse.ok) {
+      const result = await checkResponse.json();
+      
+      // If server has no data or has default data, migrate from localStorage
+      const hasServerData = result.data && Object.keys(result.data).length > 0;
+      const isDefaultData = hasServerData && Object.values(result.data).every(v => v === true);
+      
+      if (!hasServerData || isDefaultData) {
+        // Try to get localStorage privacy settings
+        const localPrivacy = localStorage.getItem(`btb_privacy_${currentUser}`);
+        if (localPrivacy) {
+          const settingsObj = JSON.parse(localPrivacy);
+          
+          // Sync to server
+          const saveResponse = await fetch('/api/save-privacy', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token, privacySettings: settingsObj })
+          });
+          
+          if (saveResponse.ok) {
+            console.log('✓ Migrated privacy settings from localStorage to server');
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('Privacy migration skipped:', e);
+  }
 }
 
 // Lock settings interface
