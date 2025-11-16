@@ -146,14 +146,21 @@ const privacy = {
   
   apply: () => {
     console.log('🔒 Privacy Settings:', state.privacySettings);
-    privacy.cardConfigs.forEach(({ selector, key }) => {
-      const element = document.querySelector(selector);
-      const isVisible = state.privacySettings[key];
-      console.log(`  ${key}: ${isVisible} (${selector}) - Element found: ${!!element}`);
-      if (element) {
-        element.style.display = isVisible ? 'block' : 'none';
-      }
-    });
+    
+    // Use setTimeout to ensure DOM is fully ready
+    setTimeout(() => {
+      privacy.cardConfigs.forEach(({ selector, key }) => {
+        const element = document.querySelector(selector);
+        const isVisible = state.privacySettings[key];
+        console.log(`  ${key}: ${isVisible} (${selector}) - Element found: ${!!element}`);
+        if (element) {
+          element.style.display = isVisible ? 'block' : 'none';
+          console.log(`    → Set ${selector} display to: ${isVisible ? 'block' : 'none'}`);
+        } else {
+          console.warn(`    ⚠️ Element ${selector} not found in DOM!`);
+        }
+      });
+    }, 100);
   }
 };
 
