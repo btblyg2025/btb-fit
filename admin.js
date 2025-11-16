@@ -481,7 +481,9 @@ function updateSilhouette() {
   }
 
   const last = entries[entries.length - 1];
-  const bmi = computeBMI(last.weight, last.height);
+  const baseline = loadBaselineStats();
+  const height = baseline?.height || 175;
+  const bmi = computeBMI(last.weight, height);
   const category = bmiCategory(bmi);
   const base = 22;
   let factor = 1 + (bmi - base) / 40;
@@ -633,7 +635,9 @@ function updateBMIChart() {
   const ctx = canvas.getContext('2d');
   const sorted = entries.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
   const labels = sorted.map(e => e.date);
-  const bmiData = sorted.map(e => computeBMI(e.weight, e.height));
+  const baseline = loadBaselineStats();
+  const height = baseline?.height || 175;
+  const bmiData = sorted.map(e => computeBMI(e.weight, height));
   
   const data = {
     labels: labels,
@@ -689,7 +693,9 @@ function updateAthleticChart() {
     // Get entries up to this point for workout bonus calculation
     const entriesUpToNow = sorted.slice(0, idx + 1);
     const workoutBonus = calculateWorkoutBonus(entriesUpToNow);
-    return computeAthleticism(e.weight, e.height, e.muscle, workoutBonus);
+    const baseline = loadBaselineStats();
+    const height = baseline?.height || 175;
+    return computeAthleticism(e.weight, height, e.muscle, workoutBonus);
   });
   
   const data = {
@@ -1056,14 +1062,7 @@ async function initAdmin() {
       document.getElementById('welcome-message').textContent = `Welcome, ${userProfile.displayName}`;
     }
     
-    // Pre-fill height from baseline as placeholder hint
-    if (baseline.height && !isNaN(baseline.height)) {
-      const totalInches = baseline.height / 2.54;
-      const feet = Math.floor(totalInches / 12);
-      const inches = Math.round((totalInches % 12) * 10) / 10;
-      document.getElementById('height-feet').placeholder = `${feet} ft (baseline)`;
-      document.getElementById('height-inches').placeholder = `${inches} in (baseline)`;
-    }
+    // Height is now always pulled from baseline, no need for entry-level height field
     
     // Pre-fill body composition from baseline as placeholder hints
     if (baseline.muscle && !isNaN(baseline.muscle)) {
@@ -1198,8 +1197,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const date = document.getElementById('date-input').value;
     let weight = parseFloat(document.getElementById('weight-input').value);
-    const heightFeet = parseFloat(document.getElementById('height-feet').value);
-    const heightInches = parseFloat(document.getElementById('height-inches').value) || 0;
     const muscle = parseFloat(document.getElementById('muscle-input').value);
     const bodyFat = parseFloat(document.getElementById('body-fat-input').value);
     const bodyWater = parseFloat(document.getElementById('body-water-input').value);
@@ -1208,25 +1205,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (!date || isNaN(weight)) return;
     
-    let height;
-    // If height not provided, use baseline height
-    if (isNaN(heightFeet)) {
-      const baseline = loadBaselineStats();
-      if (!baseline || !baseline.height) {
-        alert('Please set your baseline height in Settings first, or enter height for this entry.');
-        return;
-      }
-      height = baseline.height;
-    } else {
-      // Validate provided height
-      if (heightFeet < 3 || heightFeet > 9 || heightInches < 0 || heightInches >= 12) {
-        alert('Please enter a valid height (3-9 feet, 0-11 inches)');
-        return;
-      }
-      // Convert feet-inches to cm
-      const totalInches = (heightFeet * 12) + heightInches;
-      height = totalInches * 2.54;
+    // Always use baseline height
+    const baseline = loadBaselineStats();
+    if (!baseline || !baseline.height) {
+      alert('Please set your baseline height in Settings first.');
+      return;
     }
+    const height = baseline.height;
     
     const unitVal = document.getElementById('unit-select').value;
     const minWeight = unitVal === 'lb' ? 44 : 20;
@@ -1279,7 +1264,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const newEntry = existingEntry ? {
       ...existingEntry, 
       weight, 
-      height, 
       muscle: isNaN(muscle) ? existingEntry.muscle : muscle,
       bodyFat: isNaN(bodyFat) ? existingEntry.bodyFat : bodyFat,
       bodyWater: isNaN(bodyWater) ? existingEntry.bodyWater : bodyWater,
@@ -1288,7 +1272,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } : { 
       date, 
       weight, 
-      height, 
       muscle: isNaN(muscle) ? undefined : muscle,
       bodyFat: isNaN(bodyFat) ? undefined : bodyFat,
       bodyWater: isNaN(bodyWater) ? undefined : bodyWater,

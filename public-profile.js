@@ -193,8 +193,10 @@ const silhouette = {
       return;
     }
     
+    const baseline = utils.getFromStorage(`btb_baseline_${PUBLIC_USER}`, {});
+    const height = baseline?.height || 175;
     const latest = state.entries[state.entries.length - 1];
-    const { weight = 0, muscle = 0, musclePercent = muscle, bodyFat = 0, water = 0, carbs = 0, protein = 0, fats = 0, height = 175 } = latest;
+    const { weight = 0, muscle = 0, musclePercent = muscle, bodyFat = 0, water = 0, carbs = 0, protein = 0, fats = 0 } = latest;
     
     silhouette.updateMetrics(weight, musclePercent, bodyFat, water, carbs, protein, fats, height);
   },
@@ -387,7 +389,9 @@ const charts = {
   
   updateBMI: () => {
     const sorted = utils.sortByDate(state.entries);
-    const bmiData = sorted.map(e => utils.computeBMI(e.weight, e.height));
+    const baseline = utils.getFromStorage(`btb_baseline_${PUBLIC_USER}`, {});
+    const height = baseline?.height || 175;
+    const bmiData = sorted.map(e => utils.computeBMI(e.weight, height));
     
     const datasets = [{
       label: 'BMI',
@@ -404,7 +408,9 @@ const charts = {
   
   updateAthletic: () => {
     const sorted = utils.sortByDate(state.entries);
-    const athleticData = sorted.map(e => utils.computeAthleticism(e.weight, e.height, e.muscle || e.musclePercent));
+    const baseline = utils.getFromStorage(`btb_baseline_${PUBLIC_USER}`, {});
+    const height = baseline?.height || 175;
+    const athleticData = sorted.map(e => utils.computeAthleticism(e.weight, height, e.muscle || e.musclePercent));
     
     const datasets = [{
       label: 'Athleticism Score',
