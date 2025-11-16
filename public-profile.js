@@ -139,7 +139,7 @@ const privacy = {
     { id: 'progress', selector: '#progress-card', key: 'progress' },
     { id: 'athletic', selector: '#athletic-card', key: 'athleticism' },
     { id: 'water', selector: '#water-card', key: 'water' },
-    { id: 'macros', selector: '#macros-card', key: 'macros' },
+    { id: 'macros', selector: '#macros-module', key: 'macros' },
     { id: 'bodyComp', selector: '#body-comp-card', key: 'bodyComp' },
     { id: 'projections', selector: '#projections-module', key: 'projections' }
   ],
