@@ -292,9 +292,9 @@ function initSettings() {
   privacyCards.forEach(card => {
     const toggleId = card.id === 'bodyComp' ? 'privacy-body-comp' : `privacy-${card.id}`;
     const toggle = document.getElementById(toggleId);
-    const label = toggle?.nextElementSibling;
     if (toggle) {
       toggle.checked = card.isVisible;
+      const label = toggle.parentElement.querySelector('.toggle-label');
       if (label) {
         label.textContent = card.isVisible ? 'Public' : 'Private';
         label.style.color = card.isVisible ? '#34e27c' : '#e57373';
@@ -342,7 +342,7 @@ function initSettings() {
     if (toggle) {
       toggle.addEventListener('change', (e) => {
         card.isVisible = e.target.checked;
-        const label = e.target.nextElementSibling;
+        const label = e.target.parentElement.querySelector('.toggle-label');
         if (label) {
           label.textContent = card.isVisible ? 'Public' : 'Private';
           label.style.color = card.isVisible ? '#34e27c' : '#e57373';
