@@ -372,6 +372,7 @@ main {
 
 .toggle-label {
   font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 /* Chart view toggle */

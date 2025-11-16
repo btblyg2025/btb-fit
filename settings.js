@@ -6,16 +6,19 @@ let currentUser = ADMIN_USER;
 let userProfile = {
   displayName: ''
 };
-let privacySettings = {
-  silhouette: true,
-  bmi: true,
-  progress: true,
-  athleticism: true,
-  water: true,
-  macros: true,
-  bodyComp: true,
-  projections: true
-};
+
+// Privacy cards as array of objects
+let privacyCards = [
+  { id: 'silhouette', name: 'User Silhouette', isVisible: true },
+  { id: 'bmi', name: 'BMI Over Time', isVisible: true },
+  { id: 'progress', name: 'Progress Chart', isVisible: true },
+  { id: 'athleticism', name: 'Athleticism Score', isVisible: true },
+  { id: 'water', name: 'Water Intake', isVisible: true },
+  { id: 'macros', name: 'Daily Macros', isVisible: true },
+  { id: 'bodyComp', name: 'Body Composition', isVisible: true },
+  { id: 'projections', name: 'Weight Projections', isVisible: true }
+];
+
 let entries = [];
 let isAuthenticated = false;
 let baselineEditMode = false;
@@ -50,7 +53,13 @@ function loadPrivacySettings() {
   try {
     const raw = localStorage.getItem(`btb_privacy_${currentUser}`);
     if (raw) {
-      privacySettings = JSON.parse(raw);
+      const savedSettings = JSON.parse(raw);
+      // Update each card's visibility from saved settings
+      privacyCards.forEach(card => {
+        if (savedSettings.hasOwnProperty(card.id)) {
+          card.isVisible = savedSettings[card.id];
+        }
+      });
     }
   } catch (e) {
     console.error('Failed to load privacy settings:', e);
@@ -61,7 +70,12 @@ function loadPrivacySettings() {
 function savePrivacySettings() {
   if (!currentUser) return;
   try {
-    localStorage.setItem(`btb_privacy_${currentUser}`, JSON.stringify(privacySettings));
+    // Convert array back to object format for storage
+    const settingsObj = {};
+    privacyCards.forEach(card => {
+      settingsObj[card.id] = card.isVisible;
+    });
+    localStorage.setItem(`btb_privacy_${currentUser}`, JSON.stringify(settingsObj));
   } catch (e) {
     console.error('Failed to save privacy settings:', e);
   }
@@ -274,15 +288,19 @@ function initSettings() {
   // Update the saved data display
   updateSavedDataDisplay();
   
-  // Set privacy toggle states
-  document.getElementById('privacy-silhouette').checked = privacySettings.silhouette;
-  document.getElementById('privacy-bmi').checked = privacySettings.bmi;
-  document.getElementById('privacy-progress').checked = privacySettings.progress;
-  document.getElementById('privacy-athleticism').checked = privacySettings.athleticism;
-  document.getElementById('privacy-water').checked = privacySettings.water;
-  document.getElementById('privacy-macros').checked = privacySettings.macros;
-  document.getElementById('privacy-body-comp').checked = privacySettings.bodyComp;
-  document.getElementById('privacy-projections').checked = privacySettings.projections;
+  // Set privacy toggle states and labels
+  privacyCards.forEach(card => {
+    const toggleId = card.id === 'bodyComp' ? 'privacy-body-comp' : `privacy-${card.id}`;
+    const toggle = document.getElementById(toggleId);
+    const label = toggle?.nextElementSibling;
+    if (toggle) {
+      toggle.checked = card.isVisible;
+      if (label) {
+        label.textContent = card.isVisible ? 'Public' : 'Private';
+        label.style.color = card.isVisible ? '#34e27c' : '#e57373';
+      }
+    }
+  });
   
   console.log('Setting up field selector event listener...');
   const fieldSelector = document.getElementById('field-selector');
@@ -318,45 +336,24 @@ function initSettings() {
   }
   
   // Privacy toggle event listeners
-  document.getElementById('privacy-silhouette').addEventListener('change', (e) => {
-    privacySettings.silhouette = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
-  });
-  document.getElementById('privacy-bmi').addEventListener('change', (e) => {
-    privacySettings.bmi = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
-  });
-  document.getElementById('privacy-progress').addEventListener('change', (e) => {
-    privacySettings.progress = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
-  });
-  document.getElementById('privacy-athleticism').addEventListener('change', (e) => {
-    privacySettings.athleticism = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
-  });
-  document.getElementById('privacy-water').addEventListener('change', (e) => {
-    privacySettings.water = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
-  });
-  document.getElementById('privacy-macros').addEventListener('change', (e) => {
-    privacySettings.macros = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
-  });
-  document.getElementById('privacy-body-comp').addEventListener('change', (e) => {
-    privacySettings.bodyComp = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
-  });
-  document.getElementById('privacy-projections').addEventListener('change', (e) => {
-    privacySettings.projections = e.target.checked;
-    savePrivacySettings();
-    syncToCloud('privacy', privacySettings);
+  privacyCards.forEach(card => {
+    const toggleId = card.id === 'bodyComp' ? 'privacy-body-comp' : `privacy-${card.id}`;
+    const toggle = document.getElementById(toggleId);
+    if (toggle) {
+      toggle.addEventListener('change', (e) => {
+        card.isVisible = e.target.checked;
+        const label = e.target.nextElementSibling;
+        if (label) {
+          label.textContent = card.isVisible ? 'Public' : 'Private';
+          label.style.color = card.isVisible ? '#34e27c' : '#e57373';
+        }
+        savePrivacySettings();
+        // Convert to object format for cloud sync
+        const settingsObj = {};
+        privacyCards.forEach(c => settingsObj[c.id] = c.isVisible);
+        syncToCloud('privacy', settingsObj);
+      });
+    }
   });
   
   console.log('initSettings complete');
