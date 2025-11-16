@@ -2,6 +2,15 @@
 
 let currentPeriod = 'week';
 
+// Clear browser cache on page load
+if ('caches' in window) {
+  caches.keys().then(cacheNames => {
+    cacheNames.forEach(cacheName => {
+      caches.delete(cacheName);
+    });
+  });
+}
+
 // Calculate weight loss for a user over a time period
 function calculateWeightLoss(entries, days) {
   if (!entries || entries.length === 0) return 0;
