@@ -17,7 +17,12 @@ let privacyCards = [
   { id: 'water', name: 'Water Intake', isVisible: true },
   { id: 'macros', name: 'Daily Macros', isVisible: true },
   { id: 'bodyComp', name: 'Body Composition', isVisible: true },
-  { id: 'projections', name: 'Weight Projections', isVisible: true }
+  { id: 'projections', name: 'Weight Projections', isVisible: true },
+  { id: 'caloricBalance', name: 'Caloric Balance', isVisible: true },
+  { id: 'strengthWeight', name: 'Strength-to-Weight', isVisible: true },
+  { id: 'recomposition', name: 'Body Recomposition', isVisible: true },
+  { id: 'consistency', name: 'Consistency Tracker', isVisible: true },
+  { id: 'boneBmr', name: 'Bone Density & BMR', isVisible: true }
 ];
 
 let entries = [];

@@ -10,8 +10,17 @@
   <link rel="stylesheet" href="style.css">
   <!-- Diagnostic: Check DOM BEFORE Chart.js loads -->
   <script>
+    // Check IMMEDIATELY when script executes (synchronous)
+    console.log('🔬 SYNC CHECK (before DOM): macros-card in document.body?', document.body ? document.body.innerHTML.includes('macros-card') : 'body not yet parsed');
+    
     document.addEventListener('DOMContentLoaded', () => {
       console.log('🔬 BEFORE CHART.JS CHECK: macros-card exists?', !!document.getElementById('macros-card'));
+      console.log('🔬 BEFORE CHART.JS: body HTML includes "macros-card"?', document.body.innerHTML.includes('macros-card'));
+      
+      // List ALL card IDs found
+      const allCards = document.querySelectorAll('.card');
+      const cardIds = Array.from(allCards).map(card => card.id || card.className);
+      console.log('🔬 ALL CARDS FOUND:', cardIds);
     });
   </script>
   <!-- Chart.js for graphs -->
@@ -113,6 +122,6 @@
     </main>
   </div>
 
-  <script src="public-profile.js?v=8"></script>
+  <script src="public-profile.js?v=9"></script>
 </body>
 </html>

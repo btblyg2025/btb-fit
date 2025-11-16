@@ -73,6 +73,50 @@
           <h2>Daily Macros</h2>
           <canvas id="public-macros-chart"></canvas>
         </div>
+
+        <div class="card" id="caloric-balance-card">
+          <h2>Caloric Balance</h2>
+          <canvas id="caloric-balance-chart"></canvas>
+        </div>
+
+        <div class="card" id="strength-weight-card">
+          <h2>Strength-to-Weight Ratio</h2>
+          <canvas id="strength-weight-chart"></canvas>
+        </div>
+
+        <div class="card" id="recomposition-card">
+          <h2>Body Recomposition</h2>
+          <canvas id="recomposition-chart"></canvas>
+        </div>
+
+        <div class="card" id="consistency-card">
+          <h2>Consistency Tracker</h2>
+          <div style="padding: 20px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 20px;">
+              <div style="text-align: center;">
+                <div style="font-size: 14px; color: #9aa8c7; margin-bottom: 8px;">Current Streak</div>
+                <div id="current-streak" style="font-size: 32px; font-weight: bold; color: #34e27c;">0</div>
+                <div style="font-size: 12px; color: #9aa8c7;">days</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 14px; color: #9aa8c7; margin-bottom: 8px;">Longest Streak</div>
+                <div id="longest-streak" style="font-size: 32px; font-weight: bold; color: #1ac0ff;">0</div>
+                <div style="font-size: 12px; color: #9aa8c7;">days</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 14px; color: #9aa8c7; margin-bottom: 8px;">Completion Rate</div>
+                <div id="completion-rate" style="font-size: 32px; font-weight: bold; color: #ffda6a;">0%</div>
+                <div style="font-size: 12px; color: #9aa8c7;">last 30 days</div>
+              </div>
+            </div>
+            <canvas id="consistency-chart" style="max-height: 150px;"></canvas>
+          </div>
+        </div>
+
+        <div class="card" id="bone-bmr-card">
+          <h2>Bone Density & BMR</h2>
+          <canvas id="bone-bmr-chart"></canvas>
+        </div>
       </div>
 
       <div class="card" id="projections-module" style="margin-top: 24px;">

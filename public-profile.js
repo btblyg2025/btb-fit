@@ -12,7 +12,12 @@ const state = {
     bmi: null,
     water: null,
     macros: null,
-    bodyComp: null
+    bodyComp: null,
+    caloricBalance: null,
+    strengthWeight: null,
+    recomposition: null,
+    consistency: null,
+    boneBmr: null
   },
   userProfile: { displayName: '' },
   privacySettings: {
@@ -23,7 +28,12 @@ const state = {
     water: true,
     macros: true,
     bodyComp: true,
-    projections: true
+    projections: true,
+    caloricBalance: true,
+    strengthWeight: true,
+    recomposition: true,
+    consistency: true,
+    boneBmr: true
   },
   entries: []
 };
@@ -141,7 +151,12 @@ const privacy = {
     { id: 'water', selector: '#water-card', key: 'water' },
     { id: 'macros', selector: '#macros-module', key: 'macros' },
     { id: 'bodyComp', selector: '#body-comp-card', key: 'bodyComp' },
-    { id: 'projections', selector: '#projections-module', key: 'projections' }
+    { id: 'projections', selector: '#projections-module', key: 'projections' },
+    { id: 'caloricBalance', selector: '#caloric-balance-card', key: 'caloricBalance' },
+    { id: 'strengthWeight', selector: '#strength-weight-card', key: 'strengthWeight' },
+    { id: 'recomposition', selector: '#recomposition-card', key: 'recomposition' },
+    { id: 'consistency', selector: '#consistency-card', key: 'consistency' },
+    { id: 'boneBmr', selector: '#bone-bmr-card', key: 'boneBmr' }
   ],
   
   apply: () => {
@@ -544,6 +559,274 @@ const charts = {
       const ctx = canvas.getContext('2d');
       state.charts.bodyComp = new Chart(ctx, config);
     }
+  },
+  
+  updateCaloricBalance: () => {
+    const sorted = utils.sortByDate(state.entries);
+    const baseline = utils.getFromStorage(`btb_baseline_${PUBLIC_USER}`, {});
+    const bmr = baseline?.bmr || 0;
+    
+    if (!bmr) return; // Can't calculate without BMR
+    
+    const bmrData = sorted.map(() => bmr);
+    const intakeData = sorted.map(e => {
+      const protein = e.protein || 0;
+      const carbs = e.carbs || 0;
+      const fats = e.fats || 0;
+      return (protein * 4) + (carbs * 4) + (fats * 9);
+    });
+    const balanceData = sorted.map((e, i) => intakeData[i] - bmr);
+    
+    const datasets = [
+      {
+        label: 'BMR (baseline)',
+        data: bmrData,
+        borderColor: '#9aa8c7',
+        backgroundColor: 'rgba(154, 168, 199, 0.1)',
+        borderDash: [5, 5],
+        tension: 0
+      },
+      {
+        label: 'Daily Intake (cal)',
+        data: intakeData,
+        borderColor: '#34e27c',
+        backgroundColor: 'rgba(52, 226, 124, 0.2)',
+        tension: 0.2
+      },
+      {
+        label: 'Balance',
+        data: balanceData,
+        borderColor: '#ff6b6b',
+        backgroundColor: 'rgba(255, 107, 107, 0.2)',
+        tension: 0.2,
+        fill: true
+      }
+    ];
+    
+    chartFactory.createOrUpdate('caloricBalance', 'caloric-balance-chart', 'line', datasets, {
+      y: { title: 'Calories', color: '#9aa8c7' }
+    });
+  },
+  
+  updateStrengthWeight: () => {
+    const sorted = utils.sortByDate(state.entries);
+    const ratioData = sorted.map(e => {
+      const muscle = e.muscle || e.musclePercent || 0;
+      const weight = e.weight || 1;
+      return (muscle / weight) * 10; // Scaled for better visualization
+    });
+    
+    const datasets = [{
+      label: 'Strength-to-Weight Ratio',
+      data: ratioData,
+      borderColor: '#e48bff',
+      backgroundColor: 'rgba(228, 139, 255, 0.2)',
+      tension: 0.2,
+      fill: true
+    }];
+    
+    chartFactory.createOrUpdate('strengthWeight', 'strength-weight-chart', 'line', datasets, {
+      y: { title: 'Ratio Score', color: '#e48bff', beginAtZero: true }
+    });
+  },
+  
+  updateRecomposition: () => {
+    const sorted = utils.sortByDate(state.entries);
+    const muscleData = sorted.map(e => e.muscle || e.musclePercent || null);
+    const fatData = sorted.map(e => e.bodyFat || null);
+    
+    // Calculate recomposition score (muscle gain - fat loss)
+    const recompData = sorted.map((e, i) => {
+      if (i === 0) return 0;
+      const muscleDelta = (muscleData[i] || 0) - (muscleData[i-1] || 0);
+      const fatDelta = (fatData[i-1] || 0) - (fatData[i] || 0); // Reverse for fat loss
+      return muscleDelta + fatDelta;
+    });
+    
+    const datasets = [
+      {
+        label: 'Muscle %',
+        data: muscleData,
+        borderColor: '#34e27c',
+        backgroundColor: 'rgba(52, 226, 124, 0.2)',
+        tension: 0.2,
+        yAxisID: 'y',
+        spanGaps: true
+      },
+      {
+        label: 'Body Fat %',
+        data: fatData,
+        borderColor: '#ff6b6b',
+        backgroundColor: 'rgba(255, 107, 107, 0.2)',
+        tension: 0.2,
+        yAxisID: 'y',
+        spanGaps: true
+      },
+      {
+        label: 'Recomp Score',
+        data: recompData,
+        borderColor: '#ffda6a',
+        backgroundColor: 'rgba(255, 218, 106, 0.2)',
+        tension: 0.2,
+        yAxisID: 'y1',
+        type: 'bar'
+      }
+    ];
+    
+    chartFactory.createOrUpdate('recomposition', 'recomposition-chart', 'line', datasets, {
+      y: { title: 'Percentage (%)', color: '#9aa8c7' },
+      y1: { title: 'Recomp Score', color: '#ffda6a' }
+    });
+  },
+  
+  updateConsistency: () => {
+    const sorted = utils.sortByDate(state.entries);
+    
+    // Calculate streaks
+    let currentStreak = 0;
+    let longestStreak = 0;
+    let tempStreak = 0;
+    
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    // Check if there's an entry from today or yesterday
+    const latestEntry = sorted.length > 0 ? new Date(sorted[sorted.length - 1].date) : null;
+    if (latestEntry) {
+      const diffDays = Math.floor((today - latestEntry) / (1000 * 60 * 60 * 24));
+      if (diffDays <= 1) {
+        currentStreak = 1;
+        tempStreak = 1;
+        
+        // Count backwards
+        for (let i = sorted.length - 2; i >= 0; i--) {
+          const currentDate = new Date(sorted[i + 1].date);
+          const prevDate = new Date(sorted[i].date);
+          const gap = Math.floor((currentDate - prevDate) / (1000 * 60 * 60 * 24));
+          
+          if (gap === 1) {
+            currentStreak++;
+            tempStreak++;
+          } else {
+            if (tempStreak > longestStreak) longestStreak = tempStreak;
+            tempStreak = 1;
+          }
+        }
+      }
+    }
+    
+    if (tempStreak > longestStreak) longestStreak = tempStreak;
+    if (currentStreak > longestStreak) longestStreak = currentStreak;
+    
+    // Calculate completion rate (last 30 days)
+    const thirtyDaysAgo = new Date(today);
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const recentEntries = sorted.filter(e => new Date(e.date) >= thirtyDaysAgo);
+    const completionRate = Math.round((recentEntries.length / 30) * 100);
+    
+    // Update display
+    const currentStreakEl = document.getElementById('current-streak');
+    const longestStreakEl = document.getElementById('longest-streak');
+    const completionRateEl = document.getElementById('completion-rate');
+    
+    if (currentStreakEl) currentStreakEl.textContent = currentStreak;
+    if (longestStreakEl) longestStreakEl.textContent = longestStreak;
+    if (completionRateEl) completionRateEl.textContent = `${completionRate}%`;
+    
+    // Create chart showing entries per week
+    const last12Weeks = [];
+    for (let i = 11; i >= 0; i--) {
+      const weekStart = new Date(today);
+      weekStart.setDate(weekStart.getDate() - (i * 7));
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekEnd.getDate() + 6);
+      
+      const entriesInWeek = sorted.filter(e => {
+        const entryDate = new Date(e.date);
+        return entryDate >= weekStart && entryDate <= weekEnd;
+      }).length;
+      
+      last12Weeks.push(entriesInWeek);
+    }
+    
+    const labels = last12Weeks.map((_, i) => `W${i + 1}`);
+    const datasets = [{
+      label: 'Entries per Week',
+      data: last12Weeks,
+      backgroundColor: last12Weeks.map(v => v >= 5 ? '#34e27c' : v >= 3 ? '#ffda6a' : '#ff6b6b'),
+      borderColor: '#1ac0ff',
+      borderWidth: 1
+    }];
+    
+    const canvas = document.getElementById('consistency-chart');
+    if (!canvas) return;
+    
+    const config = {
+      type: 'bar',
+      data: { labels, datasets },
+      options: {
+        ...chartFactory.defaultOptions,
+        scales: {
+          y: {
+            title: { display: true, text: 'Entries', color: '#9aa8c7' },
+            ticks: { color: '#9aa8c7', stepSize: 1 },
+            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+            beginAtZero: true,
+            max: 7
+          },
+          x: {
+            ticks: { color: '#9aa8c7' },
+            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+          }
+        }
+      }
+    };
+    
+    if (state.charts.consistency) {
+      state.charts.consistency.data.labels = labels;
+      state.charts.consistency.data.datasets = datasets;
+      state.charts.consistency.update();
+    } else {
+      const ctx = canvas.getContext('2d');
+      state.charts.consistency = new Chart(ctx, config);
+    }
+  },
+  
+  updateBoneBmr: () => {
+    const sorted = utils.sortByDate(state.entries);
+    const baseline = utils.getFromStorage(`btb_baseline_${PUBLIC_USER}`, {});
+    
+    const boneMassData = sorted.map(e => {
+      const boneMassKg = e.boneMass || baseline?.boneMass || 0;
+      return boneMassKg * 2.20462; // Convert to lbs for display
+    });
+    
+    const bmrData = sorted.map(e => e.bmr || baseline?.bmr || 0);
+    
+    const datasets = [
+      {
+        label: 'Bone Mass (lb)',
+        data: boneMassData,
+        borderColor: '#9aa8c7',
+        backgroundColor: 'rgba(154, 168, 199, 0.2)',
+        tension: 0.2,
+        yAxisID: 'y'
+      },
+      {
+        label: 'BMR (cal/day)',
+        data: bmrData,
+        borderColor: '#1ac0ff',
+        backgroundColor: 'rgba(26, 192, 255, 0.2)',
+        tension: 0.2,
+        yAxisID: 'y1'
+      }
+    ];
+    
+    chartFactory.createOrUpdate('boneBmr', 'bone-bmr-chart', 'line', datasets, {
+      y: { title: 'Bone Mass (lb)', color: '#9aa8c7' },
+      y1: { title: 'BMR (cal)', color: '#1ac0ff' }
+    });
   }
 };
 
@@ -700,6 +983,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('🔍 RIGHT AFTER updateMacros(): macros-card exists?', !!macrosCardAfterMacros);
   
   charts.updateBodyComp();
+  charts.updateCaloricBalance();
+  charts.updateStrengthWeight();
+  charts.updateRecomposition();
+  charts.updateConsistency();
+  charts.updateBoneBmr();
   projections.calculate();
   
   const adminLink = document.getElementById('secret-admin-link');
