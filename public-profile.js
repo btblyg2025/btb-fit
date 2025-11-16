@@ -654,10 +654,21 @@ const projections = {
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🎯 DOMContentLoaded fired');
   
+  // DEBUG: Check if macros-card exists right after DOM loads
+  const macrosCardInitial = document.getElementById('macros-card');
+  console.log('🔍 IMMEDIATE CHECK: macros-card exists?', !!macrosCardInitial);
+  if (macrosCardInitial) {
+    console.log('🔍 macros-card innerHTML:', macrosCardInitial.innerHTML);
+  }
+  
   // Load data from server first (especially privacy settings)
   console.log('🔄 Awaiting initData()...');
   await initData();
   console.log('✅ initData() completed');
+  
+  // DEBUG: Check again after initData
+  const macrosCardAfterInit = document.getElementById('macros-card');
+  console.log('🔍 AFTER INIT: macros-card exists?', !!macrosCardAfterInit);
   
   console.log('🔄 Initializing UI...');
   
@@ -666,6 +677,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   privacy.apply();
   console.log('✅ Privacy applied');
   
+  // DEBUG: Check before rendering charts
+  const macrosCardBeforeCharts = document.getElementById('macros-card');
+  console.log('🔍 BEFORE CHARTS: macros-card exists?', !!macrosCardBeforeCharts);
+  
   // Then render visible content
   initHeader();
   silhouette.update();
@@ -673,7 +688,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   charts.updateAthletic();
   charts.updateBMI();
   charts.updateWater();
+  
+  // DEBUG: Check right before updateMacros
+  const macrosCardBeforeMacros = document.getElementById('macros-card');
+  console.log('🔍 RIGHT BEFORE updateMacros(): macros-card exists?', !!macrosCardBeforeMacros);
+  
   charts.updateMacros();
+  
+  // DEBUG: Check right after updateMacros
+  const macrosCardAfterMacros = document.getElementById('macros-card');
+  console.log('🔍 RIGHT AFTER updateMacros(): macros-card exists?', !!macrosCardAfterMacros);
+  
   charts.updateBodyComp();
   projections.calculate();
   
