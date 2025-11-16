@@ -1,6 +1,8 @@
 // Public profile script - read-only view of btbga's fitness journey
+console.log('🚀 public-profile.js loaded');
 
 const PUBLIC_USER = 'btbga';
+console.log('👤 PUBLIC_USER:', PUBLIC_USER);
 
 // State management
 const state = {
@@ -25,6 +27,7 @@ const state = {
   },
   entries: []
 };
+console.log('📦 Initial state.privacySettings:', state.privacySettings);
 
 // Utility functions
 const utils = {
@@ -71,35 +74,50 @@ const utils = {
   
   loadFromServer: async (endpoint, fallbackKey, defaultValue) => {
     try {
+      console.log(`📡 Fetching from ${endpoint}...`);
       const response = await fetch(endpoint, { method: 'GET' });
+      console.log(`📡 Response status: ${response.status}`);
       if (response.ok) {
         const result = await response.json();
+        console.log(`📡 Server data:`, result.data);
         // Cache to localStorage for offline access
         if (fallbackKey && result.data) {
           localStorage.setItem(fallbackKey, JSON.stringify(result.data));
         }
         return result.data || defaultValue;
+      } else {
+        console.warn(`Server returned ${response.status}, using fallback`);
       }
     } catch (e) {
       console.warn(`Failed to load from ${endpoint}, using fallback:`, e);
     }
     // Fallback to localStorage
-    return utils.getFromStorage(fallbackKey, defaultValue);
+    const fallbackData = utils.getFromStorage(fallbackKey, defaultValue);
+    console.log(`📡 Using fallback data:`, fallbackData);
+    return fallbackData;
   }
 };
 
 // Load initial data
 const initData = async () => {
+  console.log('🔄 initData() starting...');
+  
   // Load privacy from server (affects ALL users)
+  console.log('🔄 Loading privacy from server...');
   state.privacySettings = await utils.loadFromServer(
     '/api/load-privacy',
     `btb_privacy_${PUBLIC_USER}`,
     state.privacySettings
   );
+  console.log('✅ Privacy loaded:', state.privacySettings);
   
   // Load profile and entries from localStorage
+  console.log('🔄 Loading profile and entries from localStorage...');
   state.userProfile = utils.getFromStorage(`btb_profile_${PUBLIC_USER}`, state.userProfile);
   state.entries = utils.getFromStorage(`btb_entries_${PUBLIC_USER}`, []);
+  console.log('✅ Profile loaded:', state.userProfile);
+  console.log('✅ Entries loaded:', state.entries.length, 'entries');
+  console.log('🔄 initData() complete');
 };
 
 // Initialize header
@@ -127,9 +145,11 @@ const privacy = {
   ],
   
   apply: () => {
+    console.log('🔒 Privacy Settings:', state.privacySettings);
     privacy.cardConfigs.forEach(({ selector, key }) => {
       const element = document.querySelector(selector);
       const isVisible = state.privacySettings[key];
+      console.log(`  ${key}: ${isVisible} (${selector}) - Element found: ${!!element}`);
       if (element) {
         element.style.display = isVisible ? 'block' : 'none';
       }
@@ -612,9 +632,14 @@ const projections = {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
-  // Load data from server first (especially privacy settings)
-  await initData();
+  console.log('🎯 DOMContentLoaded fired');
   
+  // Load data from server first (especially privacy settings)
+  console.log('🔄 Awaiting initData()...');
+  await initData();
+  console.log('✅ initData() completed');
+  
+  console.log('🔄 Initializing UI...');
   initHeader();
   silhouette.update();
   charts.updateProgress();
@@ -624,7 +649,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   charts.updateMacros();
   charts.updateBodyComp();
   projections.calculate();
+  console.log('🔄 Applying privacy settings...');
   privacy.apply();
+  console.log('✅ Privacy applied');
   
   const adminLink = document.getElementById('secret-admin-link');
   if (adminLink) {
@@ -632,4 +659,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.location.href = 'admin.html';
     });
   }
+  
+  console.log('🎉 Page initialization complete!');
+  console.log('📊 Final state.privacySettings:', state.privacySettings);
 });
