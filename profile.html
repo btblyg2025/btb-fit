@@ -8,8 +8,20 @@
   <meta http-equiv="Expires" content="0">
   <title>btb.fit – Public Profile</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Diagnostic: Check DOM BEFORE Chart.js loads -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🔬 BEFORE CHART.JS CHECK: macros-card exists?', !!document.getElementById('macros-card'));
+    });
+  </script>
   <!-- Chart.js for graphs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Diagnostic: Check DOM AFTER Chart.js loads -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🔬 AFTER CHART.JS CHECK: macros-card exists?', !!document.getElementById('macros-card'));
+    });
+  </script>
 </head>
 <body>
   <div class="app">
@@ -101,6 +113,6 @@
     </main>
   </div>
 
-  <script src="public-profile.js?v=7"></script>
+  <script src="public-profile.js?v=8"></script>
 </body>
 </html>
