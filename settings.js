@@ -350,7 +350,20 @@ async function initSettings() {
   
   // Set privacy toggle states and labels
   privacyCards.forEach(card => {
-    const toggleId = card.id === 'bodyComp' ? 'privacy-body-comp' : `privacy-${card.id}`;
+    // Map card IDs to HTML element IDs (handle special cases with dashes)
+    let toggleId;
+    if (card.id === 'bodyComp') {
+      toggleId = 'privacy-body-comp';
+    } else if (card.id === 'caloricBalance') {
+      toggleId = 'privacy-caloric-balance';
+    } else if (card.id === 'strengthWeight') {
+      toggleId = 'privacy-strength-weight';
+    } else if (card.id === 'boneBmr') {
+      toggleId = 'privacy-bone-bmr';
+    } else {
+      toggleId = `privacy-${card.id}`;
+    }
+    
     const toggle = document.getElementById(toggleId);
     if (toggle) {
       toggle.checked = card.isVisible;
@@ -397,7 +410,20 @@ async function initSettings() {
   
   // Privacy toggle event listeners
   privacyCards.forEach(card => {
-    const toggleId = card.id === 'bodyComp' ? 'privacy-body-comp' : `privacy-${card.id}`;
+    // Map card IDs to HTML element IDs (handle special cases with dashes)
+    let toggleId;
+    if (card.id === 'bodyComp') {
+      toggleId = 'privacy-body-comp';
+    } else if (card.id === 'caloricBalance') {
+      toggleId = 'privacy-caloric-balance';
+    } else if (card.id === 'strengthWeight') {
+      toggleId = 'privacy-strength-weight';
+    } else if (card.id === 'boneBmr') {
+      toggleId = 'privacy-bone-bmr';
+    } else {
+      toggleId = `privacy-${card.id}`;
+    }
+    
     const toggle = document.getElementById(toggleId);
     if (toggle) {
       toggle.addEventListener('change', (e) => {
